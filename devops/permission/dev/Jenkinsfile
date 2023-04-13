@@ -15,7 +15,7 @@ pipeline{
     environment {
 
         // Harbor Mirror Center Address
-        REGISTRY_URL = "registry.rakour.com:11223"
+        REGISTRY_URL = "registry.your-domain.com:11223"
 
         // Project Project Name
         PROJECT_NAME = "rgrpc-dev"
