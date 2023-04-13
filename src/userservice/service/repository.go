@@ -34,7 +34,7 @@ func (r *Repository) UserModel() *gorm.DB {
 	return r.db.Table("user")
 }
 
-// IsUsernameExists Check is username exists
+// IsUsernameExists 查询用户名是否存在
 func (r *Repository) IsUsernameExists(username string) (bool, error) {
 
 	result := r.UserModel().Where("username = ?", username).Find(&migrate.User{}).Limit(1)
@@ -49,7 +49,7 @@ func (r *Repository) IsUsernameExists(username string) (bool, error) {
 
 }
 
-// Register Register a new user
+// Register 注册一个新用户
 func (r *Repository) Register(request *userV1.RegisterRequest) (bool, error) {
 
 	encrypt := pkg.NewEncrypt()
@@ -71,7 +71,7 @@ func (r *Repository) Register(request *userV1.RegisterRequest) (bool, error) {
 
 }
 
-// Login User login
+// Login 用户登录
 func (r *Repository) Login(ctx context.Context, request *userV1.LoginRequest) (*migrate.User, error) {
 
 	user := &migrate.User{}
@@ -130,7 +130,31 @@ func (r *Repository) Login(ctx context.Context, request *userV1.LoginRequest) (*
 
 }
 
-// Logout user logout
-func (r *Repository) Logout() (bool, error) {
+// Logout 用户退出登录
+// 用户退出登录后调用 auth 服务删除授权数据并且删除数据库 access token
+func (r *Repository) Logout(ctx context.Context, accessToken string) (bool, error) {
+
+	// 调用 auth 服务删除授权数据
+	destroyAuthResp, err := r.authClient.DestroyAuth(ctx, &authV1.DestroyAuthRequest{AccessToken: accessToken})
+	if err != nil {
+		return false, errors.New("删除授权数据失败，错误：" + err.Error())
+	}
+	if !destroyAuthResp.Success {
+		return false, errors.New("删除授权数据失败")
+	}
+
+	// 删除数据库 access token
+	user := &migrate.User{}
+	result := r.UserModel().Where("access_token = ?", accessToken).First(&user)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, errors.New("删除 access token 失败，错误：access token 不存在")
+	}
+	user.AccessToken = ""
+	user.AccessTokenExpireTime = 0
+	result = r.UserModel().Save(&user)
+	if result.Error != nil {
+		return false, errors.New("更新 access token 失败")
+	}
+
 	return true, nil
 }

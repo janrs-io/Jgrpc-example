@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
-
+	"errors"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"strings"
 
 	userV1 "userservice/genproto/go/v1"
 )
@@ -25,7 +27,7 @@ func NewServer(repo *Repository, userClient userV1.UserServiceClient) userV1.Use
 	}
 }
 
-// Register user register
+// Register 用户注册
 func (s *Server) Register(ctx context.Context, req *userV1.RegisterRequest) (*emptypb.Empty, error) {
 
 	isExists, err := s.repo.IsUsernameExists(req.Username)
@@ -44,7 +46,7 @@ func (s *Server) Register(ctx context.Context, req *userV1.RegisterRequest) (*em
 
 }
 
-// Login user login
+// Login 用户登录
 func (s *Server) Login(ctx context.Context, req *userV1.LoginRequest) (*userV1.LoginResponse, error) {
 
 	result, err := s.repo.Login(ctx, req)
@@ -62,17 +64,41 @@ func (s *Server) Login(ctx context.Context, req *userV1.LoginRequest) (*userV1.L
 	return loginResp, nil
 }
 
-// Logout user logout
+// Logout 用户退出登录
 func (s *Server) Logout(ctx context.Context, empty *emptypb.Empty) (*emptypb.Empty, error) {
-	return &emptypb.Empty{}, nil
+
+	resp := empty
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return resp, status.Error(codes.Aborted, "退出失败，获取 context 上下文失败")
+	}
+	accessTokenMD := md.Get("authorization")
+	if len(accessTokenMD) == 0 || len(accessTokenMD[0]) == 0 {
+		return resp, status.Error(codes.Aborted, "退出登录失败，获取 access token 失败")
+	}
+	// 截取 bearer 后面的 access token 字符
+	accessToken := accessTokenMD[0]
+	if len(accessToken) > 7 {
+		bearer := accessToken[0:7]
+		if strings.ToLower(bearer) == "bearer " {
+			accessToken = accessToken[7:]
+		}
+	}
+	result, err := s.repo.Logout(ctx, accessToken)
+	if err != nil {
+		return resp, err
+	}
+	if !result {
+		return resp, errors.New("退出登录失败")
+	}
+	return resp, nil
+
 }
 
-// Info Get user info
+// Info 用户用户详情
 func (s *Server) Info(ctx context.Context, empty *emptypb.Empty) (*userV1.InfoResponse, error) {
 
-	_ = s.userClient
 	infoResp := &userV1.InfoResponse{}
-	infoResp.Username = "test============="
 	return infoResp, nil
 
 }
