@@ -8,7 +8,7 @@ spec:
   gateways:
     - rgrpc
   hosts:
-    - dev.api.rakour.com
+    - dev.api.your-domain.com
   http:
     - match:
         - uri:
