@@ -1,0 +1,18 @@
+type: google.api.Service
+config_version: 3
+name: User service apis
+
+http:
+  rules:
+    # user register
+    - selector: proto.v1.UserService.Register
+      post: /user.v1.register
+      body: "*"
+    - selector: proto.v1.UserService.Login
+      post: /user.v1.login
+      body: "*"
+    - selector: proto.v1.UserService.Logout
+      post: /user.v1.logout
+      body: "*"
+    - selector: proto.v1.UserService.Info
+      get: /user.v1.info

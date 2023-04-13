@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: "rgrpc-dev-jwt"
+  namespace: rgrpc-dev
+spec:
+  selector:
+    matchLabels:
+      app: user
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            requestPrincipals: [ "rgrpc-dev.istio/*" ]
