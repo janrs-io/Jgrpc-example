@@ -1,0 +1,10 @@
+type: google.api.Service
+config_version: 3
+
+http:
+  rules:
+    - selector: proto.v1.AuthService.RegisterAuth
+      post: /auth.v1.registerAuth
+      body: "*"
+    - selector: proto.v1.AuthService.GetAuth
+      get: /auth.v1.getAuth

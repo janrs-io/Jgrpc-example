@@ -1,0 +1,22 @@
+apiVersion: "security.istio.io/v1beta1"
+kind: "RequestAuthentication"
+metadata:
+  name: "rgrpc-dev-jwt"
+  namespace: rgrpc-dev
+spec:
+  selector:
+    matchLabels:
+      app: user
+  jwtRules:
+    - issuer: "rgrpc-dev.istio"
+      jwks: '{
+        "keys": [
+            {
+			    "kty": "RSA",
+			    "e": "AQAB",
+			    "kid": "76eef9a0-6298-44ae-83e0-7ed79b4856f1",
+			    "n": "p4SnXHr7Al5iQ-9NENLqVIIKZ10wrf3X2wgthsjFEy68Gguz9C_HdRTl26B3Zbp27wV8Url-ittzlT4evE-O4RZN9dmDHI5r3ln37xc43DNzdF29PPpS8yxyk5MdgDgvksQhncOi3BwBpK6jFNtEDWWHWJHYUsBKdBP4b2Xv4geDuj94QNZ4fFkBUWvIXl8YcPMkSvZvyP2Nv93ejSYxb4p5vD6YV__2zst8N0qdUy2orKV1ETC7HGlwA6NlGZWbDbJ2YZ_DovYjoHYvOfzEagWF8Tls2niwsHyipbt91VWv73GASLAhL-GRY5tkUS9KapslqD1EDH1yY9hN9hRncw"
+			}
+        ]
+    }'
+      forwardOriginalToken: true

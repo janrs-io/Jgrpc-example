@@ -1,0 +1,46 @@
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: rgrpc-dev
+  labels:
+    app: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      volumes:
+        - name: userservice-config
+          configMap:
+            name: userservice-config
+            items:
+              - key: userservice-config.yaml
+                path: userservice-config.yaml
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      containers:
+        - name: user
+          image: REGISTRY_URL/PROJECT_NAME/IMAGE_NAME:IMAGE_VERSION
+          command:
+            - /opt/service/userservice/userservice
+          args:
+            - -config=/etc/config/userservice-config.yaml
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9001
+            - containerPort: 50051
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: userservice-config
+              mountPath: /etc/config/

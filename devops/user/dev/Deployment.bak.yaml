@@ -1,0 +1,109 @@
+---
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: rgrpc-dev
+  labels:
+    app: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      containers:
+        - name: user
+          image: REGISTRY_URL/PROJECT_NAME/IMAGE_NAME:IMAGE_VERSION
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9001
+            - containerPort: 50051
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+          env:
+            # 数据库配置
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mariadb
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: mariadb
+                  key: port
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mariadb
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: mariadb
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: mariadb
+                  key: database
+
+            # redis 配置
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: port
+            - name: REDIS_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: username
+            - name: REDIS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: password
+            - name: REDIS_POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: pool_size
+            - name: REDIS_DIAL_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: dial_timeout
+            - name: REDIS_POOL_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: pool_timeout
+            - name: REDIS_READ_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: read_timeout
+            - name: REDIS_WRITE_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: write_timeout

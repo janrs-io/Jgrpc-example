@@ -1,0 +1,20 @@
+version: v1
+plugins:
+  - plugin: go
+    out: genproto/go
+    opt:
+      - paths=source_relative
+  - plugin: go-grpc
+    out: genproto/go
+    opt:
+      - paths=source_relative
+  - plugin: grpc-gateway
+    out: genproto/go
+    opt:
+      - paths=source_relative
+      - grpc_api_configuration=proto/v1/authservice.yaml
+  - plugin: validate
+    out: genproto/go
+    opt:
+      - lang=go
+      - paths=source_relative
