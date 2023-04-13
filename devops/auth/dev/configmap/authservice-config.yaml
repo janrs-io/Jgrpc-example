@@ -15,7 +15,7 @@ database:
   host: 192.168.1.36 # Host
   port: 3306 # Port
   username: john # Username
-  password: adD#9sD!d0 # Password
+  password: your-password # Password
   database: rgrpc-user # Database
   charset: utf8mb4 # Charset
   maxIdleCons: 10 # Maximum number of connections in the idle connection pool
@@ -29,7 +29,7 @@ redis:
   host: 192.168.1.36
   port: ":6379"
   username: "default"
-  password: "d%aD12dW@d0"
+  password: your-password
   database: 0
   dial_timeout: 10s
   read_timeout: 10s
