@@ -88,12 +88,14 @@ func (r *Repository) Login(ctx context.Context, request *userV1.LoginRequest) (*
 		return nil, errors.New("账号或密码错误")
 	}
 
-	// 销毁旧的授权数据
-	destroyAuthResp, err := r.authClient.DestroyAuth(ctx, &authV1.DestroyAuthRequest{
-		AccessToken: user.AccessToken,
-	})
-	if err != nil || !destroyAuthResp.Success {
-		return nil, errors.New("登录失败")
+	// 如果存在旧的 access token ，则销毁旧的授权数据
+	if len(user.AccessToken) > 0 {
+		destroyAuthResp, err := r.authClient.DestroyAuth(ctx, &authV1.DestroyAuthRequest{
+			AccessToken: user.AccessToken,
+		})
+		if err != nil || !destroyAuthResp.Success {
+			return nil, errors.New("登录失败")
+		}
 	}
 
 	// 创建 accessToken 以及设置 token 过期时间
@@ -155,6 +157,18 @@ func (r *Repository) Logout(ctx context.Context, accessToken string) (bool, erro
 	if result.Error != nil {
 		return false, errors.New("更新 access token 失败")
 	}
-
 	return true, nil
+
+}
+
+// Info 获取用户信息
+func (r *Repository) Info(accessToken string) (*migrate.User, error) {
+
+	user := &migrate.User{}
+	result := r.UserModel().Where("access_token = ?", accessToken).First(&user)
+	if result.Error != nil {
+		return nil, errors.New("查询用户数据失败，错误：" + result.Error.Error())
+	}
+	return user, nil
+
 }

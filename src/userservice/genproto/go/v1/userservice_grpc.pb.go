@@ -24,6 +24,7 @@ const (
 	UserService_Login_FullMethodName    = "/proto.v1.UserService/Login"
 	UserService_Logout_FullMethodName   = "/proto.v1.UserService/Logout"
 	UserService_Info_FullMethodName     = "/proto.v1.UserService/Info"
+	UserService_Update_FullMethodName   = "/proto.v1.UserService/Update"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -33,7 +34,8 @@ type UserServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InfoResponse, error)
+	Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetail_Detail, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 }
 
 type userServiceClient struct {
@@ -71,9 +73,18 @@ func (c *userServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
-func (c *userServiceClient) Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*InfoResponse, error) {
-	out := new(InfoResponse)
+func (c *userServiceClient) Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetail_Detail, error) {
+	out := new(UserDetail_Detail)
 	err := c.cc.Invoke(ctx, UserService_Info_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
+	out := new(UpdateResponse)
+	err := c.cc.Invoke(ctx, UserService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +98,8 @@ type UserServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	Info(context.Context, *emptypb.Empty) (*InfoResponse, error)
+	Info(context.Context, *emptypb.Empty) (*UserDetail_Detail, error)
+	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -104,8 +116,11 @@ func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*Lo
 func (UnimplementedUserServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedUserServiceServer) Info(context.Context, *emptypb.Empty) (*InfoResponse, error) {
+func (UnimplementedUserServiceServer) Info(context.Context, *emptypb.Empty) (*UserDetail_Detail, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Info not implemented")
+}
+func (UnimplementedUserServiceServer) Update(context.Context, *UpdateRequest) (*UpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -192,6 +207,24 @@ func _UserService_Info_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Update(ctx, req.(*UpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +247,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Info",
 			Handler:    _UserService_Info_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _UserService_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

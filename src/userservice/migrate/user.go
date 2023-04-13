@@ -22,13 +22,13 @@ func MigrateUserTable(db *gorm.DB, conf *config.Config) {
 // User User Table
 type User struct {
 	// primary id
-	ID *uint32 `json:"id" gorm:"column:id;primaryKey;type:int(10);unique;autoIncrement;comment:primary id"`
+	ID int64 `json:"id" gorm:"column:id;primaryKey;type:int(10);unique;autoIncrement;comment:primary id"`
 	// username
 	Username string `json:"username" gorm:"column:username;uniqueIndex:idx_username;type:varchar(20);default:'';not null;comment:username"`
 	// password
 	Password string `json:"password" gorm:"column:password;type:varchar(255);default:'';not null;comment:password"`
 	// sex
-	Sex uint8 `json:"sex" gorm:"column:sex;type:tinyint(2);default:0;comment:sex[1=male2=female]"`
+	Sex int64 `json:"sex" gorm:"column:sex;type:tinyint(2);default:0;comment:sex[1=male2=female]"`
 	// id number
 	IDNumber string `json:"id_number" gorm:"column:id_number;type:varchar(30);default:'';comment:id number"`
 	// email
@@ -36,7 +36,7 @@ type User struct {
 	// phone
 	Phone string `json:"phone" gorm:"column:phone;type:varchar(20);default:'';comment:phone"`
 	// is_disable
-	IsDisable uint8 `json:"is_disable" gorm:"column:is_disable;type:tinyint(1);default:2;not null;comment:is_disable[1=enable2=disable]"`
+	IsDisable int64 `json:"is_disable" gorm:"column:is_disable;type:tinyint(1);default:2;not null;comment:is_disable[1=enable2=disable]"`
 	// access_token
 	AccessToken string `json:"access_token" gorm:"column:access_token;type:varchar(255);default:'';comment:access_token"`
 	// access_token_expire_time

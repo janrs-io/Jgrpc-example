@@ -3,12 +3,10 @@ package service
 import (
 	"context"
 	"errors"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"strings"
-
 	userV1 "userservice/genproto/go/v1"
 )
 
@@ -65,40 +63,50 @@ func (s *Server) Login(ctx context.Context, req *userV1.LoginRequest) (*userV1.L
 }
 
 // Logout 用户退出登录
-func (s *Server) Logout(ctx context.Context, empty *emptypb.Empty) (*emptypb.Empty, error) {
+func (s *Server) Logout(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
 
-	resp := empty
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return resp, status.Error(codes.Aborted, "退出失败，获取 context 上下文失败")
-	}
-	accessTokenMD := md.Get("authorization")
-	if len(accessTokenMD) == 0 || len(accessTokenMD[0]) == 0 {
-		return resp, status.Error(codes.Aborted, "退出登录失败，获取 access token 失败")
-	}
-	// 截取 bearer 后面的 access token 字符
-	accessToken := accessTokenMD[0]
-	if len(accessToken) > 7 {
-		bearer := accessToken[0:7]
-		if strings.ToLower(bearer) == "bearer " {
-			accessToken = accessToken[7:]
-		}
+	accessToken, err := grpc_auth.AuthFromMD(ctx, "Bearer")
+	if err != nil {
+		return nil, errors.New("退出登录失败，错误：获取头部 access token 失败")
 	}
 	result, err := s.repo.Logout(ctx, accessToken)
 	if err != nil {
-		return resp, err
+		return nil, err
 	}
 	if !result {
-		return resp, errors.New("退出登录失败")
+		return nil, errors.New("退出登录失败")
 	}
-	return resp, nil
+	return &emptypb.Empty{}, nil
 
 }
 
-// Info 用户用户详情
-func (s *Server) Info(ctx context.Context, empty *emptypb.Empty) (*userV1.InfoResponse, error) {
+// Info 获取用户信息
+func (s *Server) Info(ctx context.Context, _ *emptypb.Empty) (*userV1.UserDetail_Detail, error) {
 
-	infoResp := &userV1.InfoResponse{}
-	return infoResp, nil
+	resp := &userV1.UserDetail_Detail{}
+	accessToken, err := grpc_auth.AuthFromMD(ctx, "Bearer")
+	if err != nil {
+		return nil, status.Error(codes.Unknown, "获取 access token 失败")
+	}
+	info, err := s.repo.Info(accessToken)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+	resp = &userV1.UserDetail_Detail{
+		Id:                    info.ID,
+		Username:              info.Username,
+		Sex:                   info.Sex,
+		IdNumber:              info.IDNumber,
+		Email:                 info.Email,
+		Phone:                 info.Phone,
+		IsDisable:             info.IsDisable,
+		AccessToken:           info.AccessToken,
+		AccessTokenExpireTime: info.AccessTokenExpireTime,
+		NickName:              info.NickName,
+		RealName:              info.RealName,
+		CreateTime:            info.CreateTime,
+		UpdateTime:            info.UpdateTime,
+	}
+	return resp, nil
 
 }
