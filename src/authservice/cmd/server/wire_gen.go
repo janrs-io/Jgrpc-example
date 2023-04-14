@@ -8,21 +8,25 @@ package server
 
 import (
 	"authservice/config"
-	"authservice/genproto/go/v1"
-	"authservice/pkg"
-	"authservice/service"
+	"authservice/service/v1/client"
+	"authservice/service/v1/server"
 )
 
 // Injectors from wire.go:
 
-// InitServer Inject service's component
-func InitServer(conf *config.Config) (authV1.AuthServiceServer, error) {
-	client := pkg.NewRedis(conf)
-	repository := service.NewRepository(client)
-	authServiceClient, err := service.NewClient(conf)
+func InitServer(cfg string) (*Server, error) {
+	configConfig := config.NewConfig(cfg)
+	client := NewRedis(configConfig)
+	repository := serverV1.NewRepository(client)
+	group := NewRunGroup()
+	logger := NewLogger()
+	server := NewHttpServer(configConfig)
+	authServiceClient, err := clientV1.NewAuthClient(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	authServiceServer := service.NewServer(repository, authServiceClient)
-	return authServiceServer, nil
+	authServiceServer := serverV1.NewServer(repository, authServiceClient)
+	grpcServer := NewGrpcServer(logger, authServiceServer)
+	serverServer := NewServer(repository, configConfig, group, logger, server, grpcServer)
+	return serverServer, nil
 }

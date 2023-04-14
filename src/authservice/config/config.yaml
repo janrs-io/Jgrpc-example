@@ -12,6 +12,7 @@ database:
   logMode: info # Log level
   enableFileLogWriter: true # Whether to enable log files
   logFilename: sql.log # Log file name
+
 # redis config
 redis:
   host: 172.16.222.36
@@ -25,7 +26,6 @@ redis:
   pool_timeout: 10s
   pool_size: 10
 
-
 # grpc config
 grpc:
   host: ""
@@ -37,10 +37,3 @@ http:
   host: ""
   port: ":9001"
   name: "auth-http"
-
-
-# logger
-logger:
-  path: "./storage/grpc.log"
-  maxSize: 1024 # MB
-  localTime: true

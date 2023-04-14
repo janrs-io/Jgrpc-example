@@ -6,10 +6,9 @@ import (
 
 // Config Service config
 type Config struct {
-	Grpc   Grpc   `json:"grpc" yaml:"grpc"`
-	Http   Http   `json:"http" yaml:"http"`
-	Logger Logger `json:"logger" yaml:"logger"`
-	Redis  Redis  `json:"redis" yaml:"redis"`
+	Grpc  Grpc  `json:"grpc" yaml:"grpc"`
+	Http  Http  `json:"http" yaml:"http"`
+	Redis Redis `json:"redis" yaml:"redis"`
 }
 
 // NewConfig Initial service's config

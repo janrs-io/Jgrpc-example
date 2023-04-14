@@ -1,4 +1,4 @@
-package service
+package clientV1
 
 import (
 	"context"
@@ -8,11 +8,11 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"authservice/config"
-	authV1 "authservice/genproto/go/v1"
+	authPBV1 "authservice/genproto/go/v1"
 )
 
-// NewClient New a client connect
-func NewClient(conf *config.Config) (authV1.AuthServiceClient, error) {
+// NewAuthClient 实例化 auth 客户端
+func NewAuthClient(conf *config.Config) (authPBV1.AuthServiceClient, error) {
 
 	serverAddress := conf.Grpc.Host + conf.Grpc.Port
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -27,7 +27,7 @@ func NewClient(conf *config.Config) (authV1.AuthServiceClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := authV1.NewAuthServiceClient(conn)
+	client := authPBV1.NewAuthServiceClient(conn)
 	return client, nil
 
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package proto.v1;
 
-option go_package = "authservice/genproto/v1;authV1";
+option go_package = "authservice/genproto/v1;authPBV1";
 
 import "google/protobuf/empty.proto";
 import "validate/validate.proto";

@@ -1,4 +1,4 @@
-package service
+package serverV1
 
 import (
 	"context"
