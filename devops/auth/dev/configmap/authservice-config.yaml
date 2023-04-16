@@ -42,3 +42,12 @@ logger:
   path: "./storage/grpc.log"
   maxSize: 1024 # MB
   localTime: true
+
+
+# whiteList 权限白名单
+whiteList:
+  api:
+    - "/proto.v1.UserService/Login"
+    - "/proto.v1.UserService/Register"
+  permission:
+    - ""
