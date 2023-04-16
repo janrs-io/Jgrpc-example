@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package proto.v1;
+
+option go_package = "userservice/genproto/v1;userPBV1";
+
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
+service UserService {
+  rpc Register(RegisterRequest) returns(google.protobuf.Empty){} // 用户注册
+  rpc Login(LoginRequest) returns (LoginResponse){} // 用户登录
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty){} // 用户退出登录
+  rpc Info(google.protobuf.Empty) returns (UserDetail.Detail){} // 用户信息/详情
+  rpc Update(UpdateRequest) returns (UpdateResponse){} // 更新用户数据
+}
+
+//*****************用户注册
+message RegisterRequest {
+  string username = 1 [(validate.rules).string = {
+    pattern: "^[a-zA-Z0-9_]*$",
+    min_len: 6,
+    max_len: 16
+  }
+  ];
+  string password = 2 [(validate.rules).string = {
+    pattern: "^[a-zA-Z0-9]*$",
+    min_len: 6,
+    max_len: 16
+  }];
+}
+
+message RegisterResponse {
+  string result = 1;
+}
+
+//*****************用户登录
+message LoginRequest {
+  string username = 1 [(validate.rules).string = {min_len:1}];
+  string password = 2 [(validate.rules).string = {min_len:1}];
+}
+
+message LoginResponse {
+  string username = 1;
+  string accessToken = 2;
+  int64  expireIn = 3;
+}
+
+//*****************用户信息/详情
+message InfoResponse {
+  UserDetail.Detail info = 1;
+}
+
+//*****************更新用户
+message UpdateRequest {
+  string username = 1 [(validate.rules).string = {min_len:1}];
+  string password = 2 [(validate.rules).string = {min_len:1}];
+  int64  sex = 3;
+}
+
+message UpdateResponse {
+  bool success = 1;
+}
+
+//*****************公共 message
+//*****************用户详情
+message UserDetail {
+  message Detail {
+    int64 id = 1;
+    string username = 2;
+    int64  sex = 3;
+    string idNumber = 4;
+    string email = 5;
+    string phone = 6;
+    int64  isDisable = 7;
+    string accessToken = 8;
+    int64  accessTokenExpireTime = 9;
+    string nickName = 10;
+    string realName = 11;
+    int64  createTime = 12;
+    int64 updateTime = 13;
+  }
+}
