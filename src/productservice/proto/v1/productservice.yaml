@@ -1,0 +1,32 @@
+type: google.api.Service
+config_version: 3
+name: Product service apis
+
+http:
+  rules:
+    # 添加商品
+    - selector: proto.product.v1.ProductService.Create
+      post: /product.v1.create
+      body: "*"
+    # 更新商品
+    - selector: proto.product.v1.ProductService.Update
+      post: /product.v1.update
+      body: "*"
+    # 删除商品
+    - selector: proto.product.v1.ProductService.Delete
+      post: /product.v1.delete
+      body: "*"
+    # 获取商品详情
+    - selector: proto.product.v1.ProductService.Detail
+      get: /product.v1.detail
+    # GET - 获取商品列表
+    - selector: proto.product.v1.ProductService.List
+      get: /product.v1.list
+    # POST - 减少库存
+    - selector: proto.product.v1.ProductService.DecreaseStock
+      post: /product.v1.decreaseStock
+      body: "*"
+    # POST - 回滚库存
+    - selector: proto.product.v1.ProductService.DecreaseStockRevert
+      post: /product.v1.decreaseStockRevert
+      body: "*"

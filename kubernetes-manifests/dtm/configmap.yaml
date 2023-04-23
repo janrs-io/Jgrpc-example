@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dtm-conf
+  namespace: dtm-prod
+  labels:
+    app: dtm
+data:
+  config.yaml: |-
+    Store:
+      Driver: mysql # 此处以 mysql 为例，其他数据库可自行替换
+      Host: 192.168.1.36  # 此处设置为集群外部的数据库 host，或者集群内部的数据库 svc-dns
+      Port: 3306
+      User: john
+      Password: 'password'

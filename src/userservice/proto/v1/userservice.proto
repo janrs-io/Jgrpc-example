@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package proto.v1;
+package proto.user.v1;
 
 option go_package = "userservice/genproto/v1;userPBV1";
 

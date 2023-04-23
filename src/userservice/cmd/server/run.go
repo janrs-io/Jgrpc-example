@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	Jgrpc_response "github.com/janrs-io/Jgrpc-response"
 	"net"
 	"net/http"
 	"os"
@@ -12,7 +13,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	Jgrpc_response "github.com/janrs-io/Jgrpc-response"
 	"github.com/oklog/run"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
@@ -115,7 +115,7 @@ func NewHttpServer(conf *config.Config) *http.Server {
 	mux := runtime.NewServeMux(
 		runtime.WithErrorHandler(Jgrpc_response.HttpErrorHandler),
 		runtime.WithForwardResponseOption(Jgrpc_response.HttpSuccessResponseModifier),
-		runtime.WithMarshalerOption("*", &Jgrpc_response.CustomMarshaler{}),
+		runtime.WithMarshalerOption("*", &Jgrpc_response.CustomMarshaller{}),
 	)
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

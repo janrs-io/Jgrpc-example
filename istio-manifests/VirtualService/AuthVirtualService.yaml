@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: auth-vs
+  namespace: rgrpc-dev
+spec:
+  gateways:
+    - rgrpc
+  hosts:
+    - dev.api.your-domain.com
+  http:
+    - match:
+        - uri:
+            prefix: /auth
+      route:
+        - destination:
+            host: auth-http
+            port:
+              number: 9001

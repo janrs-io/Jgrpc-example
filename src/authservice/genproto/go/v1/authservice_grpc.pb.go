@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_RegisterAuth_FullMethodName   = "/proto.v1.AuthService/RegisterAuth"
-	AuthService_GetAuth_FullMethodName        = "/proto.v1.AuthService/GetAuth"
-	AuthService_DestroyAuth_FullMethodName    = "/proto.v1.AuthService/DestroyAuth"
-	AuthService_IsApiWhiteList_FullMethodName = "/proto.v1.AuthService/IsApiWhiteList"
+	AuthService_RegisterAuth_FullMethodName   = "/proto.auth.v1.AuthService/RegisterAuth"
+	AuthService_GetAuth_FullMethodName        = "/proto.auth.v1.AuthService/GetAuth"
+	AuthService_DestroyAuth_FullMethodName    = "/proto.auth.v1.AuthService/DestroyAuth"
+	AuthService_IsApiWhiteList_FullMethodName = "/proto.auth.v1.AuthService/IsApiWhiteList"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -195,7 +195,7 @@ func _AuthService_IsApiWhiteList_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.v1.AuthService",
+	ServiceName: "proto.auth.v1.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

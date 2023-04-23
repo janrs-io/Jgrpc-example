@@ -151,7 +151,7 @@ func RegisterAuthServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.AuthService/RegisterAuth", runtime.WithHTTPPathPattern("/auth.v1.registerAuth"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.auth.v1.AuthService/RegisterAuth", runtime.WithHTTPPathPattern("/auth.v1.registerAuth"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -176,7 +176,7 @@ func RegisterAuthServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.AuthService/GetAuth", runtime.WithHTTPPathPattern("/auth.v1.getAuth"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.auth.v1.AuthService/GetAuth", runtime.WithHTTPPathPattern("/auth.v1.getAuth"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -201,7 +201,7 @@ func RegisterAuthServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.AuthService/IsApiWhiteList", runtime.WithHTTPPathPattern("/auth.v1.isApiWhiteList"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.auth.v1.AuthService/IsApiWhiteList", runtime.WithHTTPPathPattern("/auth.v1.isApiWhiteList"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -265,7 +265,7 @@ func RegisterAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.AuthService/RegisterAuth", runtime.WithHTTPPathPattern("/auth.v1.registerAuth"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.auth.v1.AuthService/RegisterAuth", runtime.WithHTTPPathPattern("/auth.v1.registerAuth"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -287,7 +287,7 @@ func RegisterAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.AuthService/GetAuth", runtime.WithHTTPPathPattern("/auth.v1.getAuth"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.auth.v1.AuthService/GetAuth", runtime.WithHTTPPathPattern("/auth.v1.getAuth"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -309,7 +309,7 @@ func RegisterAuthServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.AuthService/IsApiWhiteList", runtime.WithHTTPPathPattern("/auth.v1.isApiWhiteList"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.auth.v1.AuthService/IsApiWhiteList", runtime.WithHTTPPathPattern("/auth.v1.isApiWhiteList"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

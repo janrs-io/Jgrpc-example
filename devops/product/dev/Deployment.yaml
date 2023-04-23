@@ -1,0 +1,46 @@
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product
+  namespace: rgrpc-dev
+  labels:
+    app: product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      volumes:
+        - name: productservice-config
+          configMap:
+            name: productservice-config
+            items:
+              - key: productservice-config.yaml
+                path: productservice-config.yaml
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      containers:
+        - name: product
+          image: REGISTRY_URL/PROJECT_NAME/IMAGE_NAME:IMAGE_VERSION
+          command:
+            - /opt/service/productservice/productservice
+          args:
+            - -config=/etc/config/productservice-config.yaml
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9001
+            - containerPort: 50051
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: productservice-config
+              mountPath: /etc/config/

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package proto.v1;
+package proto.auth.v1;
 
 option go_package = "authservice/genproto/v1;authPBV1";
 

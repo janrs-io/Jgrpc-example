@@ -20,11 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_Register_FullMethodName = "/proto.v1.UserService/Register"
-	UserService_Login_FullMethodName    = "/proto.v1.UserService/Login"
-	UserService_Logout_FullMethodName   = "/proto.v1.UserService/Logout"
-	UserService_Info_FullMethodName     = "/proto.v1.UserService/Info"
-	UserService_Update_FullMethodName   = "/proto.v1.UserService/Update"
+	UserService_Register_FullMethodName = "/proto.user.v1.UserService/Register"
+	UserService_Login_FullMethodName    = "/proto.user.v1.UserService/Login"
+	UserService_Logout_FullMethodName   = "/proto.user.v1.UserService/Logout"
+	UserService_Info_FullMethodName     = "/proto.user.v1.UserService/Info"
+	UserService_Update_FullMethodName   = "/proto.user.v1.UserService/Update"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -229,7 +229,7 @@ func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.v1.UserService",
+	ServiceName: "proto.user.v1.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

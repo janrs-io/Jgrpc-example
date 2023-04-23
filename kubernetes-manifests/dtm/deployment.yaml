@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dtm
+  namespace: dtm-prod
+  labels:
+    app: dtm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dtm
+  template:
+    metadata:
+      labels:
+        app: dtm
+    spec:
+      containers:
+        - name: dtm
+          image: yedf/dtm:1.8
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-c=/app/dtm/configs/config.yaml"
+          volumeMounts:
+            - mountPath: /app/dtm/configs
+              name: config
+          ports:
+            - containerPort: 36789
+              protocol: TCP
+              name: http
+            - containerPort: 36790
+              protocol: TCP
+              name: grpc
+          livenessProbe:
+            httpGet:
+              path: /api/ping
+              port: 36789
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              path: /api/ping
+              port: 36789
+              scheme: HTTP
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+      volumes:
+        - name: config
+          configMap:
+            name: dtm-conf

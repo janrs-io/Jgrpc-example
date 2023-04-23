@@ -1,0 +1,46 @@
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: rgrpc-test
+  labels:
+    app: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      volumes:
+        - name: authservice-config
+          configMap:
+            name: authservice-config
+            items:
+              - key: authservice-config.yaml
+                path: authservice-config.yaml
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      containers:
+        - name: auth
+          image: REGISTRY_URL/PROJECT_NAME/IMAGE_NAME:IMAGE_VERSION
+          command:
+            - /opt/service/authservice/authservice
+          args:
+            - -config=/etc/config/authservice-config.yaml
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9001
+            - containerPort: 50051
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: authservice-config
+              mountPath: /etc/config/

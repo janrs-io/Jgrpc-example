@@ -1,0 +1,46 @@
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+  namespace: rgrpc-dev
+  labels:
+    app: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      imagePullSecrets:
+        - name: registry-secret
+      volumes:
+        - name: orderservice-config
+          configMap:
+            name: orderservice-config
+            items:
+              - key: orderservice-config.yaml
+                path: orderservice-config.yaml
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      containers:
+        - name: order
+          image: REGISTRY_URL/PROJECT_NAME/IMAGE_NAME:IMAGE_VERSION
+          command:
+            - /opt/service/orderservice/orderservice
+          args:
+            - -config=/etc/config/orderservice-config.yaml
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9001
+            - containerPort: 50051
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: orderservice-config
+              mountPath: /etc/config/

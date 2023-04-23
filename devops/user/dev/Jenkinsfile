@@ -59,6 +59,7 @@ pipeline{
              }
 
             steps{
+                echo "$COMMIT_MESSAGE"
 
                 echo '>>>>>>>>>>>>>>>>>>START BUILD IMAGE<<<<<<<<<<<<<<<<<<<<'
 
@@ -95,9 +96,9 @@ pipeline{
         stage('Apply Deployment'){
 
              when {
-                 environment name: 'COMMIT_MESSAGE',
-                 value: 'apply:deploy'
-             }
+                environment name: 'COMMIT_MESSAGE',
+                value: 'apply:deploy'
+            }
             steps{
 
                 echo '>>>>>>>>>>>>>>>>>>START DEPLOY<<<<<<<<<<<<<<<<<<<<'
@@ -118,10 +119,10 @@ pipeline{
         // Apply Service
         stage('Apply Service'){
 
-             when {
-                 environment name: 'COMMIT_MESSAGE',
-                 value: 'apply:service'
-             }
+            when {
+                environment name: 'COMMIT_MESSAGE',
+                value: 'apply:service'
+            }
             steps{
 
                 echo '>>>>>>>>>>>>>>>>>>START APPLY SERVICE<<<<<<<<<<<<<<<<<<<<'

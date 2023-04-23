@@ -5,17 +5,17 @@ name: User service apis
 http:
   rules:
     # 用户注册
-    - selector: proto.v1.UserService.Register
+    - selector: proto.user.v1.UserService.Register
       post: /user.v1.register
       body: "*"
     # 用户登录
-    - selector: proto.v1.UserService.Login
+    - selector: proto.user.v1.UserService.Login
       post: /user.v1.login
       body: "*"
     # 用户退出登录
-    - selector: proto.v1.UserService.Logout
+    - selector: proto.user.v1.UserService.Logout
       post: /user.v1.logout
       body: "*"
     # 用户获取详情
-    - selector: proto.v1.UserService.Info
+    - selector: proto.user.v1.UserService.Info
       get: /user.v1.info

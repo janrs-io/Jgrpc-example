@@ -103,7 +103,7 @@ func NewHttpServer(conf *config.Config) *http.Server {
 	mux := runtime.NewServeMux(
 		runtime.WithErrorHandler(Jgrpc_response.HttpErrorHandler),
 		runtime.WithForwardResponseOption(Jgrpc_response.HttpSuccessResponseModifier),
-		runtime.WithMarshalerOption("*", &Jgrpc_response.CustomMarshaler{}),
+		runtime.WithMarshalerOption("*", &Jgrpc_response.CustomMarshaller{}),
 	)
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

@@ -30,7 +30,7 @@ func (s *Server) RegisterAuth(ctx context.Context, req *authPBV1.RegisterAuthReq
 	resp := &authPBV1.RegisterAuthResponse{}
 	resp.Success = false
 	if err != nil {
-		return resp, status.Error(codes.Aborted, "注册授权失败，错误："+err.Error())
+		return resp, status.Error(codes.FailedPrecondition, "注册授权失败，错误："+err.Error())
 	}
 	resp.Success = true
 
@@ -45,7 +45,7 @@ func (s *Server) GetAuth(ctx context.Context, req *authPBV1.GetAuthRequest) (*au
 	resp.Success = false
 	err := s.repo.GetAuthentication(ctx, req.AccessToken, req.Duration)
 	if err != nil {
-		return resp, status.Error(codes.Aborted, "获取授权失败，错误："+err.Error())
+		return resp, status.Error(codes.Unauthenticated, "获取授权失败，错误："+err.Error())
 	}
 	resp.Success = true
 	return resp, nil
@@ -58,7 +58,7 @@ func (s *Server) DestroyAuth(ctx context.Context, req *authPBV1.DestroyAuthReque
 	resp := &authPBV1.DestroyAuthResponse{}
 	resp.Success = false
 	if err := s.repo.DestroyAuthentication(ctx, req.AccessToken); err != nil {
-		return resp, status.Error(codes.Aborted, "销毁授权失败。错误："+err.Error())
+		return resp, status.Error(codes.FailedPrecondition, "销毁授权失败。错误："+err.Error())
 	}
 	resp.Success = true
 	return resp, nil

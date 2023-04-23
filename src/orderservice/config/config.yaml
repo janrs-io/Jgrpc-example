@@ -1,0 +1,35 @@
+# grpc 服务配置
+grpc:
+  host: ""
+  port: ":50052"
+  name: "order-grpc"
+
+# http 服务配置
+http:
+  host: ""
+  port: ":9002"
+  name: "order-http"
+
+# database 数据库配置
+database:
+  driver: mysql # 数据库驱动类型
+  host: 172.16.222.36 # 数据库地址
+  port: 3306 # 数据库端口
+  username: root # 账号
+  password: 1100 # 密码
+  database: rgrpc-order # 数据库
+  charset: utf8mb4 # 编码
+  maxIdleCons: 10 # 连接池最小数量
+  maxOpenCons: 100 # 连接池最大数量
+  logMode: info # 日志等级
+  enableFileLogWriter: true # 是否开启日志文件写入
+  logFilename: sql.log # 文件名称
+
+# client 客户端配置
+client:
+  # auth 鉴权服务客户端配置
+  authHost: auth-grpc
+  authPort: ":50051"
+  # product 产品服务客户端
+  productHost: product-grpc
+  productPort: ":50051"

@@ -166,7 +166,7 @@ func RegisterUserServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.UserService/Register", runtime.WithHTTPPathPattern("/user.v1.register"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.user.v1.UserService/Register", runtime.WithHTTPPathPattern("/user.v1.register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -191,7 +191,7 @@ func RegisterUserServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.UserService/Login", runtime.WithHTTPPathPattern("/user.v1.login"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.user.v1.UserService/Login", runtime.WithHTTPPathPattern("/user.v1.login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -216,7 +216,7 @@ func RegisterUserServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.UserService/Logout", runtime.WithHTTPPathPattern("/user.v1.logout"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.user.v1.UserService/Logout", runtime.WithHTTPPathPattern("/user.v1.logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -241,7 +241,7 @@ func RegisterUserServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.v1.UserService/Info", runtime.WithHTTPPathPattern("/user.v1.info"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/proto.user.v1.UserService/Info", runtime.WithHTTPPathPattern("/user.v1.info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -305,7 +305,7 @@ func RegisterUserServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.UserService/Register", runtime.WithHTTPPathPattern("/user.v1.register"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.user.v1.UserService/Register", runtime.WithHTTPPathPattern("/user.v1.register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -327,7 +327,7 @@ func RegisterUserServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.UserService/Login", runtime.WithHTTPPathPattern("/user.v1.login"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.user.v1.UserService/Login", runtime.WithHTTPPathPattern("/user.v1.login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -349,7 +349,7 @@ func RegisterUserServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.UserService/Logout", runtime.WithHTTPPathPattern("/user.v1.logout"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.user.v1.UserService/Logout", runtime.WithHTTPPathPattern("/user.v1.logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -371,7 +371,7 @@ func RegisterUserServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.v1.UserService/Info", runtime.WithHTTPPathPattern("/user.v1.info"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/proto.user.v1.UserService/Info", runtime.WithHTTPPathPattern("/user.v1.info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

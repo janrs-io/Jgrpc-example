@@ -1,0 +1,24 @@
+type: google.api.Service
+config_version: 3
+name: Order service apis
+
+http:
+  rules:
+    # 添加订单
+    - selector: proto.order.v1.OrderService.CreateSaga
+      post: /order.v1.create
+      body: "*"
+      # 更新订单
+    - selector: proto.order.v1.OrderService.Update
+      post: /order.v1.update
+      body: "*"
+    # 删除订单
+    - selector: proto.order.v1.OrderService.Delete
+      post: /order.v1.delete
+      body: "*"
+    # 获取订单详情
+    - selector: proto.order.v1.OrderService.Detail
+      get: /order.v1.detail
+    # 获取订单列表
+    - selector: proto.order.v1.OrderService.List
+      get: /order.v1.list

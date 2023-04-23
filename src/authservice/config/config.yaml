@@ -13,7 +13,7 @@ database:
   enableFileLogWriter: true # Whether to enable log files
   logFilename: sql.log # Log file name
 
-# redis config
+# redis redis 配置
 redis:
   host: 172.16.222.36
   port: ":6379"
@@ -26,13 +26,13 @@ redis:
   pool_timeout: 10s
   pool_size: 10
 
-# grpc config
+# grpc grpc 服务配置
 grpc:
   host: ""
   port: ":50052"
   name: "auth-grpc"
 
-# http config
+# http http 服务配置
 http:
   host: ""
   port: ":9002"

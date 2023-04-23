@@ -1,14 +1,15 @@
-# grpc config
+# grpc 配置
 grpc:
   host: ""
   port: ":50052"
   name: "user-grpc"
 
-# http config
+# http 配置
 http:
   host: ""
   port: ":9002"
   name: "user-http"
+
 # database config
 database:
   driver: mysql # Database Drivers
@@ -40,5 +41,6 @@ redis:
 # client
 client:
   # auth 客户端配置
+
   authHost: auth-grpc
   authPort: ":50051"
