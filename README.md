@@ -1,6 +1,10 @@
 # Jgrpc-example
 
-基于https://github.com/janrs-io/Jgrpc 微服务最佳实践写的几个案例
+基于https://github.com/janrs-io/Jgrpc 微服务最佳实践写的几个案例。
+
+**仅提供一个 `Demo` 案例代码**
+
+*本项目需要使用 `k8s` 集群才能跑通。如果是本地启动服务的话，需要把每个服务的客户端以及服务端的端口都改成不一样的。*
 
 # 已开发功能
 
