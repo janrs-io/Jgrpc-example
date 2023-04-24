@@ -8,12 +8,17 @@
 - 使用 `grpc-gateway-middleware-v2` 作为中间件
 - 统一的 `grpc` 返回以及自动解析到 `http`
 
-**仅提供一个 `Demo` 案例代码**
-
 除了提供基于 `grpc-gateway` 开发微服务的案例代码外，还有基于 `Gitlab/Jenkins/Harbor/K8s` 的 `DevOps`。`DevOps`
 流程可以参考我的博客，地址：https://janrs.com/category/cicd/
 
+
+---
+
+**仅提供一个 `Demo` 案例代码**
+
 *本项目需要使用 `k8s` 集群才能跑通。如果是本地启动服务的话，需要把每个服务的客户端以及服务端的端口都改成不一样的。*
+
+---
 
 # 已开发功能
 
