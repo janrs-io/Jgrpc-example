@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -33,13 +32,13 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error)
 	Detail(ctx context.Context, in *DetailRequest, opts ...grpc.CallOption) (*Response, error)
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*Response, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*Response, error)
-	DecreaseStock(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DecreaseStockRevert(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DecreaseStock(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*Response, error)
+	DecreaseStockRevert(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type productServiceClient struct {
@@ -50,8 +49,8 @@ func NewProductServiceClient(cc grpc.ClientConnInterface) ProductServiceClient {
 	return &productServiceClient{cc}
 }
 
-func (c *productServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *productServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, ProductService_Create_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -59,8 +58,8 @@ func (c *productServiceClient) Create(ctx context.Context, in *CreateRequest, op
 	return out, nil
 }
 
-func (c *productServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *productServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, ProductService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -77,8 +76,8 @@ func (c *productServiceClient) Detail(ctx context.Context, in *DetailRequest, op
 	return out, nil
 }
 
-func (c *productServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *productServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, ProductService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,8 +94,8 @@ func (c *productServiceClient) List(ctx context.Context, in *ListRequest, opts .
 	return out, nil
 }
 
-func (c *productServiceClient) DecreaseStock(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *productServiceClient) DecreaseStock(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, ProductService_DecreaseStock_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -104,8 +103,8 @@ func (c *productServiceClient) DecreaseStock(ctx context.Context, in *DecreaseSt
 	return out, nil
 }
 
-func (c *productServiceClient) DecreaseStockRevert(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *productServiceClient) DecreaseStockRevert(ctx context.Context, in *DecreaseStockRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, ProductService_DecreaseStockRevert_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -117,13 +116,13 @@ func (c *productServiceClient) DecreaseStockRevert(ctx context.Context, in *Decr
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
 type ProductServiceServer interface {
-	Create(context.Context, *CreateRequest) (*emptypb.Empty, error)
-	Update(context.Context, *UpdateRequest) (*emptypb.Empty, error)
+	Create(context.Context, *CreateRequest) (*Response, error)
+	Update(context.Context, *UpdateRequest) (*Response, error)
 	Detail(context.Context, *DetailRequest) (*Response, error)
-	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *DeleteRequest) (*Response, error)
 	List(context.Context, *ListRequest) (*Response, error)
-	DecreaseStock(context.Context, *DecreaseStockRequest) (*emptypb.Empty, error)
-	DecreaseStockRevert(context.Context, *DecreaseStockRequest) (*emptypb.Empty, error)
+	DecreaseStock(context.Context, *DecreaseStockRequest) (*Response, error)
+	DecreaseStockRevert(context.Context, *DecreaseStockRequest) (*Response, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -131,25 +130,25 @@ type ProductServiceServer interface {
 type UnimplementedProductServiceServer struct {
 }
 
-func (UnimplementedProductServiceServer) Create(context.Context, *CreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedProductServiceServer) Create(context.Context, *CreateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedProductServiceServer) Update(context.Context, *UpdateRequest) (*emptypb.Empty, error) {
+func (UnimplementedProductServiceServer) Update(context.Context, *UpdateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedProductServiceServer) Detail(context.Context, *DetailRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
-func (UnimplementedProductServiceServer) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+func (UnimplementedProductServiceServer) Delete(context.Context, *DeleteRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedProductServiceServer) List(context.Context, *ListRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedProductServiceServer) DecreaseStock(context.Context, *DecreaseStockRequest) (*emptypb.Empty, error) {
+func (UnimplementedProductServiceServer) DecreaseStock(context.Context, *DecreaseStockRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecreaseStock not implemented")
 }
-func (UnimplementedProductServiceServer) DecreaseStockRevert(context.Context, *DecreaseStockRequest) (*emptypb.Empty, error) {
+func (UnimplementedProductServiceServer) DecreaseStockRevert(context.Context, *DecreaseStockRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecreaseStockRevert not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}

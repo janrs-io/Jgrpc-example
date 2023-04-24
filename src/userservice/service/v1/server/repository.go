@@ -6,28 +6,44 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
 	authPBV1 "authservice/genproto/go/v1"
+	orderPBV1 "orderservice/genproto/go/v1"
+	productPBV1 "productservice/genproto/go/v1"
 	userPBV1 "userservice/genproto/go/v1"
 	"userservice/service/model"
 )
 
 // Repository Repository
 type Repository struct {
-	db         *gorm.DB
-	redis      *redis.Client
-	authClient authPBV1.AuthServiceClient
+	db            *gorm.DB
+	redis         *redis.Client
+	authClient    authPBV1.AuthServiceClient
+	orderClient   orderPBV1.OrderServiceClient
+	productClient productPBV1.ProductServiceClient
+	userClient    userPBV1.UserServiceClient
 }
 
 // NewRepository New Repository
-func NewRepository(db *gorm.DB, redis *redis.Client, authClient authPBV1.AuthServiceClient) *Repository {
+func NewRepository(
+	db *gorm.DB,
+	redis *redis.Client,
+	authClient authPBV1.AuthServiceClient,
+	orderClient orderPBV1.OrderServiceClient,
+	productClient productPBV1.ProductServiceClient,
+	userClient userPBV1.UserServiceClient,
+) *Repository {
 	return &Repository{
-		db:         db,
-		redis:      redis,
-		authClient: authClient,
+		db:            db,
+		redis:         redis,
+		authClient:    authClient,
+		orderClient:   orderClient,
+		productClient: productClient,
+		userClient:    userClient,
 	}
 }
 
@@ -90,10 +106,10 @@ func (r *Repository) Login(ctx context.Context, request *userPBV1.LoginRequest) 
 
 	// 如果存在旧的 access token ，则销毁旧的授权数据
 	if len(user.AccessToken) > 0 {
-		destroyAuthResp, err := r.authClient.DestroyAuth(ctx, &authPBV1.DestroyAuthRequest{
+		_, err := r.authClient.DestroyAuth(ctx, &authPBV1.DestroyAuthRequest{
 			AccessToken: user.AccessToken,
 		})
-		if err != nil || !destroyAuthResp.Success {
+		if err != nil {
 			return nil, errors.New("登录失败")
 		}
 	}
@@ -108,15 +124,12 @@ func (r *Repository) Login(ctx context.Context, request *userPBV1.LoginRequest) 
 	user.UpdateTime = time.Now().Unix()
 
 	// 注册授权到 auth service
-	registerAuthResp, err := r.authClient.RegisterAuth(ctx, &authPBV1.RegisterAuthRequest{
+	_, err := r.authClient.RegisterAuth(ctx, &authPBV1.RegisterAuthRequest{
 		AccessToken: accessToken,
 		Duration:    duration,
 	})
 	if err != nil {
 		return nil, err
-	}
-	if !registerAuthResp.Success {
-		return nil, errors.New("注册授权失败")
 	}
 
 	// 保存新的登录数据到数据库
@@ -134,12 +147,9 @@ func (r *Repository) Login(ctx context.Context, request *userPBV1.LoginRequest) 
 func (r *Repository) Logout(ctx context.Context, accessToken string) (bool, error) {
 
 	// 调用 auth 服务删除授权数据
-	destroyAuthResp, err := r.authClient.DestroyAuth(ctx, &authPBV1.DestroyAuthRequest{AccessToken: accessToken})
+	_, err := r.authClient.DestroyAuth(ctx, &authPBV1.DestroyAuthRequest{AccessToken: accessToken})
 	if err != nil {
 		return false, errors.New("删除授权数据失败，错误：" + err.Error())
-	}
-	if !destroyAuthResp.Success {
-		return false, errors.New("删除授权数据失败")
 	}
 
 	// 删除数据库 access token
@@ -167,5 +177,54 @@ func (r *Repository) Info(accessToken string) (*model.User, error) {
 		return nil, errors.New("查询用户数据失败，错误：" + result.Error.Error())
 	}
 	return user, nil
+
+}
+
+// UserInfo 获取用户详情
+func (r *Repository) UserInfo(ctx context.Context) (*userPBV1.UserDetail_Detail, error) {
+
+	user := &model.User{}
+
+	accessToken, err := auth.AuthFromMD(ctx, "Bearer")
+	if err != nil {
+		return nil, errors.New("获取 access token 失败")
+	}
+
+	result := r.UserModel().Where("access_token = ?", accessToken).First(&user)
+	if result.Error != nil {
+		return nil, errors.New("查询用户数据失败，错误：" + result.Error.Error())
+	}
+
+	return &userPBV1.UserDetail_Detail{
+		Id:                    user.ID,
+		Username:              user.Username,
+		Sex:                   user.Sex,
+		IdNumber:              user.IDNumber,
+		Email:                 user.Email,
+		Phone:                 user.Phone,
+		IsDisable:             user.IsDisable,
+		AccessToken:           user.AccessToken,
+		AccessTokenExpireTime: user.AccessTokenExpireTime,
+		NickName:              user.NickName,
+		RealName:              user.RealName,
+		CreateTime:            user.CreateTime,
+		UpdateTime:            user.UpdateTime,
+	}, nil
+
+}
+
+// ProductInfo 获取产品详情
+func (r *Repository) ProductInfo(ctx context.Context, request *userPBV1.OrderInfoRequest) (*productPBV1.Response, error) {
+
+	// 获取产品信息
+	return r.productClient.Detail(ctx, &productPBV1.DetailRequest{Id: request.ProductId})
+
+}
+
+// OrderInfo 获取订单详情
+func (r *Repository) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoRequest) (*orderPBV1.Response, error) {
+
+	// 获取订单信息
+	return r.orderClient.Detail(ctx, &orderPBV1.DetailRequest{Id: request.OrderId})
 
 }

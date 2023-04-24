@@ -897,7 +897,7 @@ func (m *OrderDetail) validate(all bool) error {
 
 	// no validation rules for PaymentType
 
-	// no validation rules for PayType
+	// no validation rules for PayTime
 
 	// no validation rules for UserId
 
@@ -1116,11 +1116,11 @@ func (m *Response) validate(all bool) error {
 	// no validation rules for Msg
 
 	if all {
-		switch v := interface{}(m.GetData()).(type) {
+		switch v := interface{}(m.GetProtoAnyData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, ResponseValidationError{
-					field:  "Data",
+					field:  "ProtoAnyData",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1128,16 +1128,16 @@ func (m *Response) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, ResponseValidationError{
-					field:  "Data",
+					field:  "ProtoAnyData",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetProtoAnyData()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return ResponseValidationError{
-				field:  "Data",
+				field:  "ProtoAnyData",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}

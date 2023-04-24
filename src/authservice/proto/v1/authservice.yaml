@@ -3,13 +3,13 @@ config_version: 3
 
 http:
   rules:
-    # 注册权限
-    - selector: proto.auth.v1.AuthService.RegisterAuth
-      post: /auth.v1.registerAuth
-      body: "*"
-    # 获取权限
-    - selector: proto.auth.v1.AuthService.GetAuth
-      get: /auth.v1.getAuth
-    # 查询接口是否在白名单内
-    - selector: proto.auth.v1.AuthService.IsApiWhiteList
-      get: /auth.v1.isApiWhiteList
+  # 注册权限
+  #- selector: proto.auth.v1.AuthService.RegisterAuth
+  #post: /auth.v1.registerAuth
+  #body: "*"
+  # 获取权限
+  #- selector: proto.auth.v1.AuthService.GetAuth
+  #get: /auth.v1.getAuth
+  # 查询接口是否在白名单内
+  #- selector: proto.auth.v1.AuthService.IsApiWhiteList
+  #get: /auth.v1.isApiWhiteList

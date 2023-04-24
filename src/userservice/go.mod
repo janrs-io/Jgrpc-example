@@ -4,6 +4,10 @@ go 1.19
 
 replace authservice => ../authservice
 
+replace orderservice => ../orderservice
+
+replace productservice => ../productservice
+
 require (
 	authservice v0.0.0
 	github.com/envoyproxy/protoc-gen-validate v0.10.1
@@ -12,7 +16,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
-	github.com/janrs-io/Jgrpc-response v0.0.0-20230419123542-ed587219b1e5
+	github.com/janrs-io/Jgrpc-response v0.0.2
 	github.com/oklog/run v1.1.0
 	github.com/redis/go-redis/v9 v9.0.3
 	github.com/spf13/viper v1.15.0
@@ -26,6 +30,8 @@ require (
 	google.golang.org/protobuf v1.30.0
 	gorm.io/driver/mysql v1.5.0
 	gorm.io/gorm v1.25.0
+	orderservice v0.0.0
+	productservice v0.0.0
 )
 
 require (
@@ -52,7 +58,7 @@ require (
 	golang.org/x/net v0.9.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
-	google.golang.org/genproto v0.0.0-20230403163135-c38d8f061ccd // indirect
+	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

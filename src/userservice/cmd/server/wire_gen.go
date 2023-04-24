@@ -22,15 +22,23 @@ func InitServer(cfg string) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	repository := serverV1.NewRepository(db, client, authServiceClient)
-	group := NewRunGroup()
-	logger := NewLogger()
-	server := NewHttpServer(configConfig)
+	orderServiceClient, err := clientV1.NewOrderClient(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	productServiceClient, err := clientV1.NewProductClient(configConfig)
+	if err != nil {
+		return nil, err
+	}
 	userServiceClient, err := clientV1.NewUserClient(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	userServiceServer := serverV1.NewServer(repository, logger, userServiceClient, authServiceClient)
+	repository := serverV1.NewRepository(db, client, authServiceClient, orderServiceClient, productServiceClient, userServiceClient)
+	group := NewRunGroup()
+	logger := NewLogger()
+	server := NewHttpServer(configConfig)
+	userServiceServer := serverV1.NewServer(repository, logger, userServiceClient, authServiceClient, orderServiceClient, productServiceClient)
 	grpcServer := NewGrpcServer(logger, userServiceServer)
 	serverServer := NewServer(repository, configConfig, group, logger, server, grpcServer, db)
 	return serverServer, nil

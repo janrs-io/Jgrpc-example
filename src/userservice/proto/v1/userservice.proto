@@ -5,25 +5,27 @@ package proto.user.v1;
 option go_package = "userservice/genproto/v1;userPBV1";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
 import "validate/validate.proto";
 
 service UserService {
-  rpc Register(RegisterRequest) returns(google.protobuf.Empty){} // 用户注册
-  rpc Login(LoginRequest) returns (LoginResponse){} // 用户登录
-  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty){} // 用户退出登录
-  rpc Info(google.protobuf.Empty) returns (UserDetail.Detail){} // 用户信息/详情
-  rpc Update(UpdateRequest) returns (UpdateResponse){} // 更新用户数据
+  rpc Register(RegisterRequest) returns(Response){} // 用户注册
+  rpc OrderInfo(OrderInfoRequest) returns(Response){} // 获取订单详情
+  rpc Login(LoginRequest) returns (Response){} // 用户登录
+  rpc Logout(google.protobuf.Empty) returns (Response){} // 用户退出登录
+  rpc Info(google.protobuf.Empty) returns (Response){} // 用户信息/详情
+  rpc Update(UpdateRequest) returns (Response){} // 更新用户数据
 }
 
 //*****************用户注册
 message RegisterRequest {
-  string username = 1 [(validate.rules).string = {
+  string username = 1 [json_name = "name", (validate.rules).string = {
     pattern: "^[a-zA-Z0-9_]*$",
     min_len: 6,
     max_len: 16
   }
   ];
-  string password = 2 [(validate.rules).string = {
+  string password = 2 [json_name = "password", (validate.rules).string = {
     pattern: "^[a-zA-Z0-9]*$",
     min_len: 6,
     max_len: 16
@@ -36,48 +38,67 @@ message RegisterResponse {
 
 //*****************用户登录
 message LoginRequest {
-  string username = 1 [(validate.rules).string = {min_len:1}];
-  string password = 2 [(validate.rules).string = {min_len:1}];
+  string username = 1 [json_name = "username", (validate.rules).string = {min_len:1}];
+  string password = 2 [json_name = "password", (validate.rules).string = {min_len:1}];
 }
 
 message LoginResponse {
-  string username = 1;
-  string accessToken = 2;
-  int64  expireIn = 3;
+  string username = 1[json_name = "username"];
+  string accessToken = 2[json_name = "access_token"];
+  int64  expireIn = 3[json_name = "expire_in"];
 }
 
 //*****************用户信息/详情
 message InfoResponse {
-  UserDetail.Detail info = 1;
+  UserDetail.Detail info = 1[json_name = "detail"];
 }
 
 //*****************更新用户
 message UpdateRequest {
-  string username = 1 [(validate.rules).string = {min_len:1}];
-  string password = 2 [(validate.rules).string = {min_len:1}];
-  int64  sex = 3;
+  string username = 1 [json_name = "username", (validate.rules).string = {min_len:1}];
+  string password = 2 [json_name = "password", (validate.rules).string = {min_len:1}];
+  int64  sex = 3[json_name = "sex"];
 }
 
 message UpdateResponse {
-  bool success = 1;
+  bool success = 1[json_name = "success"];
+}
+
+//*****************获取订单详情
+message OrderInfoRequest {
+  int64 OrderId = 2[json_name = "order_id", (validate.rules).int64 = {gte:1}];
+  int64 ProductId = 3[json_name = "product_id", (validate.rules).int64 = {gte:1}];
+}
+
+message OrderInfoResponse {
+  google.protobuf.Any UserInfo = 1[json_name = "user_info"];
+  google.protobuf.Any OrderInfo = 2[json_name = "order_info"];
+  google.protobuf.Any ProductInfo = 3[json_name = "product_info"];
 }
 
 //*****************公共 message
 //*****************用户详情
 message UserDetail {
   message Detail {
-    int64 id = 1;
-    string username = 2;
-    int64  sex = 3;
-    string idNumber = 4;
-    string email = 5;
-    string phone = 6;
-    int64  isDisable = 7;
-    string accessToken = 8;
-    int64  accessTokenExpireTime = 9;
-    string nickName = 10;
-    string realName = 11;
-    int64  createTime = 12;
-    int64 updateTime = 13;
+    int64 id = 1[json_name = "id"];
+    string username = 2[json_name = "username"];
+    int64  sex = 3[json_name = "sex"];
+    string idNumber = 4[json_name = "id_number"];
+    string email = 5[json_name = "email"];
+    string phone = 6[json_name = "phone"];
+    int64  isDisable = 7[json_name = "is_disable"];
+    string accessToken = 8[json_name = "access_token"];
+    int64  accessTokenExpireTime = 9[json_name = "access_token_expire_time"];
+    string nickName = 10[json_name = "nick_name"];
+    string realName = 11[json_name = "real_name"];
+    int64  createTime = 12[json_name = "create_time"];
+    int64 updateTime = 13[json_name = "update_time"];
   }
+}
+
+// grpc 返回数据。自动解析到对应的 http 返回数据
+message Response {
+  int64 Code = 1[json_name = "code"];
+  string Msg = 2[json_name = "msg"];
+  google.protobuf.Any ProtoAnyData = 3[json_name = "data"];
 }

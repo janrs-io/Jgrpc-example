@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	Jgrpc_response "github.com/janrs-io/Jgrpc-response"
@@ -91,14 +92,14 @@ func NewGrpcServer(logger log.Logger, productServer productPBV1.ProductServiceSe
 			otelgrpc.StreamServerInterceptor(),
 			// 日志拦截器
 			logging.StreamServerInterceptor(LoggerInterceptor(logger), logging.WithFieldsFromContext(logTraceID)),
-			//auth.StreamServerInterceptor(AuthenticationInterceptor),
+			auth.StreamServerInterceptor(AuthenticationInterceptor),
 		),
 		grpc.ChainUnaryInterceptor(
 			// open tracing 追踪 ID
 			otelgrpc.UnaryServerInterceptor(),
 			// 日志拦截器
 			logging.UnaryServerInterceptor(LoggerInterceptor(logger), logging.WithFieldsFromContext(logTraceID)),
-			//auth.UnaryServerInterceptor(AuthenticationInterceptor),
+			auth.UnaryServerInterceptor(AuthenticationInterceptor),
 			// PGV 中间件
 			ValidationUnaryInterceptor,
 		),

@@ -36,7 +36,7 @@ type Order struct {
 	// 订单流程状态
 	OrderStatus int64 `json:"order_status" gorm:"column:order_status;type:int(10);default:0;not null;comment:订单状态"`
 	// 金额
-	Amount float64 `json:"amount" gorm:"column:amount;type:decimal(10,4);default:0;not null;comment:订单金额"`
+	Amount float32 `json:"amount" gorm:"column:amount;type:decimal(10,4);default:0;not null;comment:订单金额"`
 	// 添加时间 / 更新时间
 	CreateTime int64 `json:"create_time" gorm:"column:create_time;type:int(10);default:0;comment:create time'"`
 	UpdateTime int64 `json:"update_time" gorm:"column:update_time;type:int(10);default:0;comment:update time"`

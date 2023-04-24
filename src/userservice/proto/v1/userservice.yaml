@@ -19,3 +19,6 @@ http:
     # 用户获取详情
     - selector: proto.user.v1.UserService.Info
       get: /user.v1.info
+    # 用户获取订单详情
+    - selector: proto.user.v1.UserService.OrderInfo
+      get: /user.v1.orderInfo

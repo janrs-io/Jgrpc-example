@@ -29,10 +29,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
-	RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthResponse, error)
-	GetAuth(ctx context.Context, in *GetAuthRequest, opts ...grpc.CallOption) (*GetAuthResponse, error)
-	DestroyAuth(ctx context.Context, in *DestroyAuthRequest, opts ...grpc.CallOption) (*DestroyAuthResponse, error)
-	IsApiWhiteList(ctx context.Context, in *IsApiWhiteListRequest, opts ...grpc.CallOption) (*IsApiWhiteListResponse, error)
+	RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*Response, error)
+	GetAuth(ctx context.Context, in *GetAuthRequest, opts ...grpc.CallOption) (*Response, error)
+	DestroyAuth(ctx context.Context, in *DestroyAuthRequest, opts ...grpc.CallOption) (*Response, error)
+	IsApiWhiteList(ctx context.Context, in *IsApiWhiteListRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type authServiceClient struct {
@@ -43,8 +43,8 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
 }
 
-func (c *authServiceClient) RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*RegisterAuthResponse, error) {
-	out := new(RegisterAuthResponse)
+func (c *authServiceClient) RegisterAuth(ctx context.Context, in *RegisterAuthRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, AuthService_RegisterAuth_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -52,8 +52,8 @@ func (c *authServiceClient) RegisterAuth(ctx context.Context, in *RegisterAuthRe
 	return out, nil
 }
 
-func (c *authServiceClient) GetAuth(ctx context.Context, in *GetAuthRequest, opts ...grpc.CallOption) (*GetAuthResponse, error) {
-	out := new(GetAuthResponse)
+func (c *authServiceClient) GetAuth(ctx context.Context, in *GetAuthRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, AuthService_GetAuth_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -61,8 +61,8 @@ func (c *authServiceClient) GetAuth(ctx context.Context, in *GetAuthRequest, opt
 	return out, nil
 }
 
-func (c *authServiceClient) DestroyAuth(ctx context.Context, in *DestroyAuthRequest, opts ...grpc.CallOption) (*DestroyAuthResponse, error) {
-	out := new(DestroyAuthResponse)
+func (c *authServiceClient) DestroyAuth(ctx context.Context, in *DestroyAuthRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, AuthService_DestroyAuth_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,8 +70,8 @@ func (c *authServiceClient) DestroyAuth(ctx context.Context, in *DestroyAuthRequ
 	return out, nil
 }
 
-func (c *authServiceClient) IsApiWhiteList(ctx context.Context, in *IsApiWhiteListRequest, opts ...grpc.CallOption) (*IsApiWhiteListResponse, error) {
-	out := new(IsApiWhiteListResponse)
+func (c *authServiceClient) IsApiWhiteList(ctx context.Context, in *IsApiWhiteListRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, AuthService_IsApiWhiteList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -83,10 +83,10 @@ func (c *authServiceClient) IsApiWhiteList(ctx context.Context, in *IsApiWhiteLi
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
-	RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error)
-	GetAuth(context.Context, *GetAuthRequest) (*GetAuthResponse, error)
-	DestroyAuth(context.Context, *DestroyAuthRequest) (*DestroyAuthResponse, error)
-	IsApiWhiteList(context.Context, *IsApiWhiteListRequest) (*IsApiWhiteListResponse, error)
+	RegisterAuth(context.Context, *RegisterAuthRequest) (*Response, error)
+	GetAuth(context.Context, *GetAuthRequest) (*Response, error)
+	DestroyAuth(context.Context, *DestroyAuthRequest) (*Response, error)
+	IsApiWhiteList(context.Context, *IsApiWhiteListRequest) (*Response, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -94,16 +94,16 @@ type AuthServiceServer interface {
 type UnimplementedAuthServiceServer struct {
 }
 
-func (UnimplementedAuthServiceServer) RegisterAuth(context.Context, *RegisterAuthRequest) (*RegisterAuthResponse, error) {
+func (UnimplementedAuthServiceServer) RegisterAuth(context.Context, *RegisterAuthRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterAuth not implemented")
 }
-func (UnimplementedAuthServiceServer) GetAuth(context.Context, *GetAuthRequest) (*GetAuthResponse, error) {
+func (UnimplementedAuthServiceServer) GetAuth(context.Context, *GetAuthRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAuth not implemented")
 }
-func (UnimplementedAuthServiceServer) DestroyAuth(context.Context, *DestroyAuthRequest) (*DestroyAuthResponse, error) {
+func (UnimplementedAuthServiceServer) DestroyAuth(context.Context, *DestroyAuthRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DestroyAuth not implemented")
 }
-func (UnimplementedAuthServiceServer) IsApiWhiteList(context.Context, *IsApiWhiteListRequest) (*IsApiWhiteListResponse, error) {
+func (UnimplementedAuthServiceServer) IsApiWhiteList(context.Context, *IsApiWhiteListRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsApiWhiteList not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}

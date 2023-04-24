@@ -16,7 +16,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
-	github.com/janrs-io/Jgrpc-response v0.0.0-20230420020627-4e0e6bb4528f
+	github.com/janrs-io/Jgrpc-response v0.0.2
 	github.com/oklog/run v1.1.0
 	github.com/spf13/viper v1.15.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.40.0

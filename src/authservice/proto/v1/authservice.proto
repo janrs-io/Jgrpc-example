@@ -5,47 +5,42 @@ package proto.auth.v1;
 option go_package = "authservice/genproto/v1;authPBV1";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
 import "validate/validate.proto";
 
 // AuthService Auth service
 service AuthService {
-  rpc RegisterAuth(RegisterAuthRequest) returns (RegisterAuthResponse){} // 注册权限
-  rpc GetAuth(GetAuthRequest) returns (GetAuthResponse){} // 获取权限
-  rpc DestroyAuth(DestroyAuthRequest) returns (DestroyAuthResponse){} // 销毁权限
-  rpc IsApiWhiteList(IsApiWhiteListRequest) returns (IsApiWhiteListResponse){} // 查询接口是否是白名单
+  rpc RegisterAuth(RegisterAuthRequest) returns (Response){} // 注册权限
+  rpc GetAuth(GetAuthRequest) returns (Response){} // 获取权限
+  rpc DestroyAuth(DestroyAuthRequest) returns (Response){} // 销毁权限
+  rpc IsApiWhiteList(IsApiWhiteListRequest) returns (Response){} // 查询接口是否是白名单
 }
 
 //*****************RegisterAuth
 message RegisterAuthRequest {
-  string accessToken = 1 [(validate.rules).string = {min_len : 1,max_len:255}];
-  int64 duration = 2 [(validate.rules).int64 = {gt :1}];
+  string accessToken = 1 [json_name = "access_token", (validate.rules).string = {min_len : 1,max_len:255}];
+  int64 duration = 2 [json_name = "duration", (validate.rules).int64 = {gt :1}];
 }
-message RegisterAuthResponse {
-  bool success = 1;
-}
-
 
 //*****************GetAuth
 message GetAuthRequest {
-  string accessToken = 1 [(validate.rules).string = {min_len :1,max_len:255}] ;
-  int64 duration = 2 [(validate.rules).int64 = {gt : 1}];
-}
-message GetAuthResponse {
-  bool success = 1;
+  string accessToken = 1 [json_name = "access_token", (validate.rules).string = {min_len :1,max_len:255}] ;
+  int64 duration = 2 [json_name = "duration", (validate.rules).int64 = {gt : 1}];
 }
 
 //*****************DestroyAuth
 message DestroyAuthRequest {
-  string accessToken = 1 [(validate.rules).string = {min_len :1,max_len:255}] ;
-}
-message DestroyAuthResponse {
-  bool success = 1;
+  string accessToken = 1 [json_name = "access_token", (validate.rules).string = {min_len :1,max_len:255}] ;
 }
 
 //*****************IsApiWhiteList
 message IsApiWhiteListRequest {
-  string fullMethodName = 1 [(validate.rules).string = {min_len :1,max_len:255}] ;
+  string fullMethodName = 1 [json_name = "full_method_name", (validate.rules).string = {min_len :1,max_len:255}] ;
 }
-message IsApiWhiteListResponse {
-  bool success = 1;
+
+// grpc 返回数据。自动解析到对应的 http 返回数据
+message Response {
+  int64 Code = 1[json_name = "code"];
+  string Msg = 2[json_name = "msg"];
+  google.protobuf.Any ProtoAnyData = 3[json_name = "data"];
 }

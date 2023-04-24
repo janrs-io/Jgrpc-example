@@ -20,22 +20,24 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserService_Register_FullMethodName = "/proto.user.v1.UserService/Register"
-	UserService_Login_FullMethodName    = "/proto.user.v1.UserService/Login"
-	UserService_Logout_FullMethodName   = "/proto.user.v1.UserService/Logout"
-	UserService_Info_FullMethodName     = "/proto.user.v1.UserService/Info"
-	UserService_Update_FullMethodName   = "/proto.user.v1.UserService/Update"
+	UserService_Register_FullMethodName  = "/proto.user.v1.UserService/Register"
+	UserService_OrderInfo_FullMethodName = "/proto.user.v1.UserService/OrderInfo"
+	UserService_Login_FullMethodName     = "/proto.user.v1.UserService/Login"
+	UserService_Logout_FullMethodName    = "/proto.user.v1.UserService/Logout"
+	UserService_Info_FullMethodName      = "/proto.user.v1.UserService/Info"
+	UserService_Update_FullMethodName    = "/proto.user.v1.UserService/Update"
 )
 
 // UserServiceClient is the client API for UserService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetail_Detail, error)
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*Response, error)
+	OrderInfo(ctx context.Context, in *OrderInfoRequest, opts ...grpc.CallOption) (*Response, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Response, error)
+	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Response, error)
+	Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Response, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type userServiceClient struct {
@@ -46,8 +48,8 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, UserService_Register_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -55,8 +57,17 @@ func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, o
 	return out, nil
 }
 
-func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
+func (c *userServiceClient) OrderInfo(ctx context.Context, in *OrderInfoRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, UserService_OrderInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, UserService_Login_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -64,8 +75,8 @@ func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	return out, nil
 }
 
-func (c *userServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *userServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, UserService_Logout_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -73,8 +84,8 @@ func (c *userServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
-func (c *userServiceClient) Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetail_Detail, error) {
-	out := new(UserDetail_Detail)
+func (c *userServiceClient) Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, UserService_Info_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -82,8 +93,8 @@ func (c *userServiceClient) Info(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
-func (c *userServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
-	out := new(UpdateResponse)
+func (c *userServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, UserService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,11 +106,12 @@ func (c *userServiceClient) Update(ctx context.Context, in *UpdateRequest, opts 
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	Info(context.Context, *emptypb.Empty) (*UserDetail_Detail, error)
-	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
+	Register(context.Context, *RegisterRequest) (*Response, error)
+	OrderInfo(context.Context, *OrderInfoRequest) (*Response, error)
+	Login(context.Context, *LoginRequest) (*Response, error)
+	Logout(context.Context, *emptypb.Empty) (*Response, error)
+	Info(context.Context, *emptypb.Empty) (*Response, error)
+	Update(context.Context, *UpdateRequest) (*Response, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -107,19 +119,22 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*emptypb.Empty, error) {
+func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedUserServiceServer) OrderInfo(context.Context, *OrderInfoRequest) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrderInfo not implemented")
+}
+func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUserServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedUserServiceServer) Logout(context.Context, *emptypb.Empty) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedUserServiceServer) Info(context.Context, *emptypb.Empty) (*UserDetail_Detail, error) {
+func (UnimplementedUserServiceServer) Info(context.Context, *emptypb.Empty) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Info not implemented")
 }
-func (UnimplementedUserServiceServer) Update(context.Context, *UpdateRequest) (*UpdateResponse, error) {
+func (UnimplementedUserServiceServer) Update(context.Context, *UpdateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
@@ -149,6 +164,24 @@ func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_OrderInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).OrderInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_OrderInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).OrderInfo(ctx, req.(*OrderInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -235,6 +268,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Register",
 			Handler:    _UserService_Register_Handler,
+		},
+		{
+			MethodName: "OrderInfo",
+			Handler:    _UserService_OrderInfo_Handler,
 		},
 		{
 			MethodName: "Login",

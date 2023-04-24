@@ -18,14 +18,10 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 	// 查询接口是否是白名单
 	isApiWhiteListReq := &authPBV1.IsApiWhiteListRequest{}
 	isApiWhiteListReq.FullMethodName = fullMethodName
-	isApiWhiteListResp, err := s.authClient.IsApiWhiteList(ctx, isApiWhiteListReq)
-	if err != nil {
-		_ = level.Info(s.logger).Log("msg", "授权失败，错误："+err.Error())
-		return ctx, status.Error(codes.Unauthenticated, "请先登录")
-	}
+	_, err := s.authClient.IsApiWhiteList(ctx, isApiWhiteListReq)
 
-	// 如果是在白名单内，直接跳过鉴权
-	if isApiWhiteListResp.Success {
+	// 没有返回错误，表示为白名单接口。直接返回不继续鉴权
+	if err == nil {
 		return ctx, nil
 	}
 
@@ -33,19 +29,15 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (c
 
 	token, err := auth.AuthFromMD(ctx, "Bearer")
 	if err != nil {
-		_ = level.Info(s.logger).Log("msg", "授权失败，错误：未传递 access token 参数。")
+		_ = level.Info(s.logger).Log("msg", "授权失败，错误[1]：未传递 access token 参数。")
 		return ctx, status.Error(codes.Unauthenticated, "请先登录")
 	}
 	getAuthReq := &authPBV1.GetAuthRequest{}
 	getAuthReq.AccessToken = token
 	getAuthReq.Duration = 7 * 24 * 60 * 60
-	authAuthResp, err := s.authClient.GetAuth(ctx, getAuthReq)
+	_, err = s.authClient.GetAuth(ctx, getAuthReq)
 	if err != nil {
-		_ = level.Info(s.logger).Log("msg", "授权失败，错误："+err.Error())
-		return ctx, status.Error(codes.Unauthenticated, "请先登录")
-	}
-	if !authAuthResp.Success {
-		_ = level.Info(s.logger).Log("msg", "授权失败，未知错误。请排查错误。")
+		_ = level.Info(s.logger).Log("msg", "授权失败，错误[2]："+err.Error())
 		return ctx, status.Error(codes.Unauthenticated, "请先登录")
 	}
 	return ctx, nil

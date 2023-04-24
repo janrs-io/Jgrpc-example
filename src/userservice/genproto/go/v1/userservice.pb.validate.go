@@ -866,6 +866,317 @@ var _ interface {
 	ErrorName() string
 } = UpdateResponseValidationError{}
 
+// Validate checks the field values on OrderInfoRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *OrderInfoRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderInfoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderInfoRequestMultiError, or nil if none found.
+func (m *OrderInfoRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderInfoRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetOrderId() < 1 {
+		err := OrderInfoRequestValidationError{
+			field:  "OrderId",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetProductId() < 1 {
+		err := OrderInfoRequestValidationError{
+			field:  "ProductId",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return OrderInfoRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderInfoRequestMultiError is an error wrapping multiple validation errors
+// returned by OrderInfoRequest.ValidateAll() if the designated constraints
+// aren't met.
+type OrderInfoRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderInfoRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderInfoRequestMultiError) AllErrors() []error { return m }
+
+// OrderInfoRequestValidationError is the validation error returned by
+// OrderInfoRequest.Validate if the designated constraints aren't met.
+type OrderInfoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderInfoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderInfoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderInfoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderInfoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderInfoRequestValidationError) ErrorName() string { return "OrderInfoRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e OrderInfoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderInfoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderInfoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderInfoRequestValidationError{}
+
+// Validate checks the field values on OrderInfoResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *OrderInfoResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OrderInfoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OrderInfoResponseMultiError, or nil if none found.
+func (m *OrderInfoResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OrderInfoResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetUserInfo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderInfoResponseValidationError{
+					field:  "UserInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderInfoResponseValidationError{
+					field:  "UserInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUserInfo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderInfoResponseValidationError{
+				field:  "UserInfo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetOrderInfo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderInfoResponseValidationError{
+					field:  "OrderInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderInfoResponseValidationError{
+					field:  "OrderInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetOrderInfo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderInfoResponseValidationError{
+				field:  "OrderInfo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetProductInfo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OrderInfoResponseValidationError{
+					field:  "ProductInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OrderInfoResponseValidationError{
+					field:  "ProductInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetProductInfo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OrderInfoResponseValidationError{
+				field:  "ProductInfo",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return OrderInfoResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// OrderInfoResponseMultiError is an error wrapping multiple validation errors
+// returned by OrderInfoResponse.ValidateAll() if the designated constraints
+// aren't met.
+type OrderInfoResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OrderInfoResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OrderInfoResponseMultiError) AllErrors() []error { return m }
+
+// OrderInfoResponseValidationError is the validation error returned by
+// OrderInfoResponse.Validate if the designated constraints aren't met.
+type OrderInfoResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OrderInfoResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OrderInfoResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OrderInfoResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OrderInfoResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OrderInfoResponseValidationError) ErrorName() string {
+	return "OrderInfoResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OrderInfoResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOrderInfoResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OrderInfoResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OrderInfoResponseValidationError{}
+
 // Validate checks the field values on UserDetail with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -964,6 +1275,138 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserDetailValidationError{}
+
+// Validate checks the field values on Response with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Response) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Response with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ResponseMultiError, or nil
+// if none found.
+func (m *Response) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Response) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Msg
+
+	if all {
+		switch v := interface{}(m.GetProtoAnyData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ResponseValidationError{
+					field:  "ProtoAnyData",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ResponseValidationError{
+					field:  "ProtoAnyData",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetProtoAnyData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ResponseValidationError{
+				field:  "ProtoAnyData",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return ResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResponseMultiError is an error wrapping multiple validation errors returned
+// by Response.ValidateAll() if the designated constraints aren't met.
+type ResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResponseMultiError) AllErrors() []error { return m }
+
+// ResponseValidationError is the validation error returned by
+// Response.Validate if the designated constraints aren't met.
+type ResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResponseValidationError) ErrorName() string { return "ResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResponseValidationError{}
 
 // Validate checks the field values on UserDetail_Detail with the rules defined
 // in the proto definition for this message. If any rules are violated, the

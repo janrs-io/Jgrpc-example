@@ -81,6 +81,10 @@ func (r *Repository) List() {
 }
 
 // Detail 获取订单详情
-func (r *Repository) Detail(request *orderPBV1.DetailRequest) {
+func (r *Repository) Detail(request *orderPBV1.DetailRequest) (*model.Order, error) {
+
+	user := &model.Order{}
+	err := r.OrderModel().First(&user, request.Id).Error
+	return user, err
 
 }

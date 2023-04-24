@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -33,14 +32,14 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	CreateRevert(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error)
+	CreateRevert(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error)
 	Detail(ctx context.Context, in *DetailRequest, opts ...grpc.CallOption) (*Response, error)
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*Response, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*Response, error)
 	// saga 事务接口
-	CreateSaga(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreateSaga(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type orderServiceClient struct {
@@ -51,8 +50,8 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
 }
 
-func (c *orderServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *orderServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, OrderService_Create_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -60,8 +59,8 @@ func (c *orderServiceClient) Create(ctx context.Context, in *CreateRequest, opts
 	return out, nil
 }
 
-func (c *orderServiceClient) CreateRevert(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *orderServiceClient) CreateRevert(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, OrderService_CreateRevert_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -69,8 +68,8 @@ func (c *orderServiceClient) CreateRevert(ctx context.Context, in *CreateRequest
 	return out, nil
 }
 
-func (c *orderServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *orderServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, OrderService_Update_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -87,8 +86,8 @@ func (c *orderServiceClient) Detail(ctx context.Context, in *DetailRequest, opts
 	return out, nil
 }
 
-func (c *orderServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *orderServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, OrderService_Delete_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -105,8 +104,8 @@ func (c *orderServiceClient) List(ctx context.Context, in *ListRequest, opts ...
 	return out, nil
 }
 
-func (c *orderServiceClient) CreateSaga(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *orderServiceClient) CreateSaga(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
 	err := c.cc.Invoke(ctx, OrderService_CreateSaga_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -118,14 +117,14 @@ func (c *orderServiceClient) CreateSaga(ctx context.Context, in *CreateRequest, 
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
-	Create(context.Context, *CreateRequest) (*emptypb.Empty, error)
-	CreateRevert(context.Context, *CreateRequest) (*emptypb.Empty, error)
-	Update(context.Context, *UpdateRequest) (*emptypb.Empty, error)
+	Create(context.Context, *CreateRequest) (*Response, error)
+	CreateRevert(context.Context, *CreateRequest) (*Response, error)
+	Update(context.Context, *UpdateRequest) (*Response, error)
 	Detail(context.Context, *DetailRequest) (*Response, error)
-	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *DeleteRequest) (*Response, error)
 	List(context.Context, *ListRequest) (*Response, error)
 	// saga 事务接口
-	CreateSaga(context.Context, *CreateRequest) (*emptypb.Empty, error)
+	CreateSaga(context.Context, *CreateRequest) (*Response, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -133,25 +132,25 @@ type OrderServiceServer interface {
 type UnimplementedOrderServiceServer struct {
 }
 
-func (UnimplementedOrderServiceServer) Create(context.Context, *CreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedOrderServiceServer) Create(context.Context, *CreateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedOrderServiceServer) CreateRevert(context.Context, *CreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedOrderServiceServer) CreateRevert(context.Context, *CreateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRevert not implemented")
 }
-func (UnimplementedOrderServiceServer) Update(context.Context, *UpdateRequest) (*emptypb.Empty, error) {
+func (UnimplementedOrderServiceServer) Update(context.Context, *UpdateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedOrderServiceServer) Detail(context.Context, *DetailRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
-func (UnimplementedOrderServiceServer) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+func (UnimplementedOrderServiceServer) Delete(context.Context, *DeleteRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedOrderServiceServer) List(context.Context, *ListRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedOrderServiceServer) CreateSaga(context.Context, *CreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedOrderServiceServer) CreateSaga(context.Context, *CreateRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSaga not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}

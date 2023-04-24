@@ -41,6 +41,11 @@ redis:
 # client
 client:
   # auth 客户端配置
-
   authHost: auth-grpc
   authPort: ":50051"
+  # order 客户端配置
+  orderHost: order-grpc
+  orderPort: ":50051"
+  # product 客户端配置
+  productHost: product-grpc
+  productPort: ":50051"

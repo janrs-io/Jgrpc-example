@@ -10,14 +10,14 @@ import "validate/validate.proto";
 
 // OrderService 订单服务
 service OrderService {
-  rpc Create(CreateRequest) returns(google.protobuf.Empty){} // 添加订单
-  rpc CreateRevert(CreateRequest) returns(google.protobuf.Empty){} // 添加订单失败补偿接口
-  rpc Update(UpdateRequest) returns(google.protobuf.Empty){} // 更新订单
+  rpc Create(CreateRequest) returns(Response){} // 添加订单
+  rpc CreateRevert(CreateRequest) returns(Response){} // 添加订单失败补偿接口
+  rpc Update(UpdateRequest) returns(Response){} // 更新订单
   rpc Detail(DetailRequest) returns (Response){} // 获取订单详情
-  rpc Delete(DeleteRequest) returns (google.protobuf.Empty){} // 删除订单
+  rpc Delete(DeleteRequest) returns (Response){} // 删除订单
   rpc List(ListRequest) returns (Response){} // 获取订单列表
   // saga 事务接口
-  rpc CreateSaga(CreateRequest) returns(google.protobuf.Empty){} // 添加订单 saga 事务接口
+  rpc CreateSaga(CreateRequest) returns(Response){} // 添加订单 saga 事务接口
 }
 
 // enum 支付方式
@@ -54,61 +54,62 @@ message CreateRequest {
 
 //*****************更新订单
 message UpdateRequest {
-  int64 id = 1 [(validate.rules).int64 = {gte:1}];
+  int64 id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
 }
 
 //*****************删除订单
 message DeleteRequest {
-  int64 id = 1 [(validate.rules).int64 = {gte:1}];
+  int64 id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
 }
 
 //*****************获取订单详情
 message DetailRequest {
-  int64 id = 1 [(validate.rules).int64 = {gte:1}];
+  int64 id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
 }
 
 //*****************获取订单列表
 message ListRequest {
-  int64 page = 1;
-  int64 pageSize = 2;
-  string name = 3;
+  int64 page = 1[json_name = "page"];
+  int64 pageSize = 2[json_name = "page_size"];
+  string name = 3[json_name = "name"];
 }
 
 message ListResponse {
-  int64 total = 1;
-  repeated OrderDetail list = 2;
+  int64 total = 1[json_name = "total"];
+  repeated OrderDetail list = 2[json_name = "list"];
 }
 
 //*****************共用 message
 
 // 分页参数
 message Page {
-  int64 page = 1;
-  int64 pageSize = 2;
+  int64 page = 1[json_name = "page"];
+  int64 pageSize = 2[json_name = "page_size"];
 }
 
 // 订单详情
 message OrderDetail{
-  int64  id = 1;
+  int64  id = 1[json_name = "id"];
   string OrderNo = 2 [json_name = "order_no"];
-  float PaymentType = 3;
-  int64 PayType = 4;
-  int64 UserId = 5;
-  int64 ProductId = 6;
-  int64 OrderStatus = 7;
-  float Amount = 8;
-  int64 CreateTime = 9;
-  int64 UpdateTime = 10;
+  int64 PaymentType = 3 [json_name = "payment_type"];
+  int64 PayTime = 4 [json_name = "pay_time"];
+  int64 UserId = 5[json_name = "user_id"];
+  int64 ProductId = 6[json_name = "product_id"];
+  int64 OrderStatus = 7[json_name = "order_status"];
+  float Amount = 8[json_name = "amount"];
+  int64 CreateTime = 9[json_name = "create_time"];
+  int64 UpdateTime = 10[json_name = "update_time"];
 }
 
 // 用户详情
 message UserDetail{
-  int64 UserId = 1;
+  int64 UserId = 1[json_name = "user_id"];
 }
 
 // grpc 返回数据。自动解析到对应的 http 返回数据
+// grpc 返回数据。自动解析到对应的 http 返回数据
 message Response {
-  int64 code = 1;
-  string msg = 2;
-  google.protobuf.Any data = 3;
+  int64 Code = 1[json_name = "code"];
+  string Msg = 2[json_name = "msg"];
+  google.protobuf.Any ProtoAnyData = 3[json_name = "data"];
 }

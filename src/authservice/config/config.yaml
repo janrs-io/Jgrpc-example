@@ -41,7 +41,15 @@ http:
 # whiteList 权限白名单
 whiteList:
   api:
-    - "/proto.v1.UserService/Login"
-    - "/proto.v1.UserService/Register"
+    # user 用户服务
+    - "/proto.user.v1.UserService/Login"
+    - "/proto.user.v1.UserService/Register"
+    # ------ 以下是事务接口白名单
+    # order 订单服务
+    - "/proto.order.v1.OrderService/Create"
+    - "/proto.order.v1.OrderService/CreateRevert"
+    # product 产品服务
+    - "/proto.order.v1.ProductService/DecreaseStock"
+    - "/proto.order.v1.ProductService/DecreaseStockRevert"
   permission:
     - ""

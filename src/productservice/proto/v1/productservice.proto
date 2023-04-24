@@ -10,90 +10,83 @@ import "validate/validate.proto";
 
 // ProductService Product 产品服务
 service ProductService {
-  rpc Create(CreateRequest) returns(google.protobuf.Empty){} // 添加产品
-  rpc Update(UpdateRequest) returns(google.protobuf.Empty){} // 更新产品
+  rpc Create(CreateRequest) returns(Response){} // 添加产品
+  rpc Update(UpdateRequest) returns(Response){} // 更新产品
   rpc Detail(DetailRequest) returns (Response){} // 获取产品详情
-  rpc Delete(DeleteRequest) returns (google.protobuf.Empty){} // 删除产品
+  rpc Delete(DeleteRequest) returns (Response){} // 删除产品
   rpc List(ListRequest) returns (Response){} // 获取产品列表
-  rpc DecreaseStock(DecreaseStockRequest) returns (google.protobuf.Empty){}// 减少库存操作
-  rpc DecreaseStockRevert(DecreaseStockRequest) returns (google.protobuf.Empty){}// 减少库存操作
+  rpc DecreaseStock(DecreaseStockRequest) returns (Response){}// 减少库存操作
+  rpc DecreaseStockRevert(DecreaseStockRequest) returns (Response){}// 减少库存操作
 }
 
 //*****************添加产品
 message CreateRequest {
-  string name = 1 [(validate.rules).string = {min_len: 1, max_len: 255}];
-  float price = 2 [(validate.rules).float = {gte:1}];
-  string desc = 3;
-  string title = 4 [(validate.rules).string = {min_len:1;max_len:100}];
-  int64 stock = 5 ;
-  int64 isDisable = 6 [(validate.rules).int64 = {in:[1, 2]}];
+  string name = 1 [json_name = "name", (validate.rules).string = {min_len: 1, max_len: 255}];
+  float price = 2 [json_name = "price", (validate.rules).float = {gte:1}];
+  string desc = 3[json_name = "desc"];
+  string title = 4 [json_name = "title", (validate.rules).string = {min_len:1;max_len:100}];
+  int64 stock = 5 [json_name = "stock"];
+  int64 isDisable = 6 [json_name = "is_disable", (validate.rules).int64 = {in:[1, 2]}];
 }
 
 //*****************更新产品
 message UpdateRequest {
-  int64 id = 1 [(validate.rules).int64 = {gte:1}];
-  optional string name = 2 [(validate.rules).string = {max_len:255}];
-  optional float price = 3;
-  optional string desc = 4 [(validate.rules).string = {max_len:255}];
-  optional string title = 5 [(validate.rules).string = {max_len:100}];
-  optional int64 stock = 6;
-  optional int64 isDisable = 7 [(validate.rules).int64 = {in:[1, 2]}];
+  int64 id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
+  optional string name = 2 [json_name = "name", (validate.rules).string = {max_len:255}];
+  optional float price = 3[json_name = "price"];
+  optional string desc = 4 [json_name = "desc", (validate.rules).string = {max_len:255}];
+  optional string title = 5 [json_name = "title", (validate.rules).string = {max_len:100}];
+  optional int64 stock = 6[json_name = "stock"];
+  optional int64 isDisable = 7 [json_name = "is_disable", (validate.rules).int64 = {in:[1, 2]}];
 }
 
 //*****************删除产品
 message DeleteRequest {
-  int64 id = 1 [(validate.rules).int64 = {gte:1}];
+  int64 id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
 }
 
 //*****************获取产品详情
 message DetailRequest {
-  int64 id = 1 [(validate.rules).int64 = {gte:1}];
+  int64 id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
 }
 
 //*****************获取产品列表
 message ListRequest {
-  int64 page = 1;
-  int64 pageSize = 2;
-  string name = 3;
+  int64 page = 1[json_name = "page"];
+  int64 pageSize = 2[json_name = "page_size"];
+  string name = 3[json_name = "name"];
 }
 
 message ListResponse {
-  int64 total = 1;
-  repeated ProductDetail list = 2;
+  int64 total = 1[json_name = "total"];
+  repeated ProductDetail list = 2[json_name = "list"];
 }
 
 
 //*****************减少库存操作
 message DecreaseStockRequest{
-  //int64  id = 1 ;
   int64  id = 1 [json_name = "id", (validate.rules).int64 = {gte:1}];
   int64 quantity = 2[json_name = "quantity", (validate.rules).int64 = {gte:1}];
 }
 
 //*****************共用 message
 
-// 分页参数
-message Page {
-  int64 page = 1;
-  int64 pageSize = 2;
-}
-
 // 产品信息
 message ProductDetail{
-  int64  id = 1;
-  string name = 2;
-  float price = 3;
-  string desc = 4;
-  string title = 5;
-  int64 stock = 6;
-  int64  isDisable = 7;
-  int64 createTime = 8;
-  int64 updateTime = 9;
+  int64  id = 1[json_name = "id"];
+  string name = 2[json_name = "name"];
+  float price = 3[json_name = "price"];
+  string desc = 4[json_name = "desc"];
+  string title = 5[json_name = "title"];
+  int64 stock = 6[json_name = "stock"];
+  int64  isDisable = 7[json_name = "is_disable"];
+  int64 createTime = 8[json_name = "create_time"];
+  int64 updateTime = 9[json_name = "update_time"];
 }
 
-// http 返回数据
+// grpc 返回数据。自动解析到对应的 http 返回数据
 message Response {
-  int64 code = 1;
-  string msg = 2;
-  google.protobuf.Any data = 3;
+  int64 Code = 1[json_name = "code"];
+  string Msg = 2[json_name = "msg"];
+  google.protobuf.Any ProtoAnyData = 3[json_name = "data"];
 }

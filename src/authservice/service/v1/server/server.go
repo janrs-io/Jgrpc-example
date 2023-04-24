@@ -24,52 +24,43 @@ func NewServer(repo *Repository, authClient authPBV1.AuthServiceClient) authPBV1
 }
 
 // RegisterAuth 用户登录后注册新的授权
-func (s *Server) RegisterAuth(ctx context.Context, req *authPBV1.RegisterAuthRequest) (*authPBV1.RegisterAuthResponse, error) {
+func (s *Server) RegisterAuth(ctx context.Context, req *authPBV1.RegisterAuthRequest) (*authPBV1.Response, error) {
 
 	err := s.repo.RegisterAuthentication(ctx, req.AccessToken, req.Duration)
-	resp := &authPBV1.RegisterAuthResponse{}
-	resp.Success = false
 	if err != nil {
-		return resp, status.Error(codes.FailedPrecondition, "注册授权失败，错误："+err.Error())
+		return nil, status.Error(codes.FailedPrecondition, "注册授权失败，错误："+err.Error())
 	}
-	resp.Success = true
-
-	return resp, nil
+	return &authPBV1.Response{}, nil
 
 }
 
 // GetAuth 获取授权
-func (s *Server) GetAuth(ctx context.Context, req *authPBV1.GetAuthRequest) (*authPBV1.GetAuthResponse, error) {
+func (s *Server) GetAuth(ctx context.Context, req *authPBV1.GetAuthRequest) (*authPBV1.Response, error) {
 
-	resp := &authPBV1.GetAuthResponse{}
-	resp.Success = false
 	err := s.repo.GetAuthentication(ctx, req.AccessToken, req.Duration)
 	if err != nil {
-		return resp, status.Error(codes.Unauthenticated, "获取授权失败，错误："+err.Error())
+		return nil, status.Error(codes.Unauthenticated, "获取授权失败，错误："+err.Error())
 	}
-	resp.Success = true
-	return resp, nil
+	return &authPBV1.Response{}, nil
 
 }
 
 // DestroyAuth 销毁授权数据
-func (s *Server) DestroyAuth(ctx context.Context, req *authPBV1.DestroyAuthRequest) (*authPBV1.DestroyAuthResponse, error) {
+func (s *Server) DestroyAuth(ctx context.Context, req *authPBV1.DestroyAuthRequest) (*authPBV1.Response, error) {
 
-	resp := &authPBV1.DestroyAuthResponse{}
-	resp.Success = false
 	if err := s.repo.DestroyAuthentication(ctx, req.AccessToken); err != nil {
-		return resp, status.Error(codes.FailedPrecondition, "销毁授权失败。错误："+err.Error())
+		return nil, status.Error(codes.FailedPrecondition, "销毁授权失败。错误："+err.Error())
 	}
-	resp.Success = true
-	return resp, nil
+	return &authPBV1.Response{}, nil
 
 }
 
 // IsApiWhiteList 查询请求的接口地址是否是在白名单内
-func (s *Server) IsApiWhiteList(_ context.Context, req *authPBV1.IsApiWhiteListRequest) (*authPBV1.IsApiWhiteListResponse, error) {
+func (s *Server) IsApiWhiteList(_ context.Context, req *authPBV1.IsApiWhiteListRequest) (*authPBV1.Response, error) {
 
-	resp := &authPBV1.IsApiWhiteListResponse{}
-	resp.Success = s.repo.IsWhiteListApi(req.FullMethodName)
-	return resp, nil
+	if s.repo.IsWhiteListApi(req.FullMethodName) {
+		return &authPBV1.Response{}, nil
+	}
+	return nil, status.Error(codes.FailedPrecondition, "非白名单接口")
 
 }
