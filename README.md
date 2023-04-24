@@ -1,6 +1,10 @@
 # Jgrpc-example [作者博客地址：https://janrs.com]
 
-基于 https://github.com/janrs-io/Jgrpc 微服务最佳实践写的几个案例。基本包含了开发中会需要用到的实践代码，包含以下：
+---
+加入微信技术交流群：https://janrs.com/join/
+---
+
+本项目基于 https://github.com/janrs-io/Jgrpc 微服务最佳实践写的几个案例。基本包含了开发中会需要用到的实践代码，包含以下：
 
 - 使用 `reids` 作为缓存以及实现鉴权和白名单[放弃使用jwt]
 - 使用 `gorm` 作为 `ORM`
