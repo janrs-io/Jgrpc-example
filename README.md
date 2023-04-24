@@ -1,8 +1,17 @@
 # Jgrpc-example
 
-基于https://github.com/janrs-io/Jgrpc 微服务最佳实践写的几个案例。
+基于 https://github.com/janrs-io/Jgrpc 微服务最佳实践写的几个案例。基本包含了开发中会需要用到的实践代码，包含以下：
+
+- 使用 `reids` 作为缓存以及实现鉴权和白名单[放弃使用jwt]
+- 使用 `gorm` 作为 `ORM`
+- 使用 `dtm` 作为事务处理
+- 使用 `grpc-gateway-middleware-v2` 作为中间件
+- 统一的 `grpc` 返回以及自动解析到 `http`
 
 **仅提供一个 `Demo` 案例代码**
+
+除了提供基于 `grpc-gateway` 开发微服务的案例代码外，还有基于 `Gitlab/Jenkins/Harbor/K8s` 的 `DevOps`。`DevOps`
+流程可以参考我的博客，地址：https://janrs.com/category/cicd/
 
 *本项目需要使用 `k8s` 集群才能跑通。如果是本地启动服务的话，需要把每个服务的客户端以及服务端的端口都改成不一样的。*
 
@@ -35,3 +44,7 @@
 
 - 添加订单功能 [增加了 DTM 事务支持。创建订单会使用 DTM 的 SAGA 事务扣除产品库存]
 - 获取订单详情功能
+
+---
+
+**如果觉得对你的学习有帮助，点个 `star`**
