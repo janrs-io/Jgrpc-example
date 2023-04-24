@@ -36,7 +36,7 @@
 - 用户登录功能
 - 用户退出功能
 - 获取用户详情功能
-- 获取用户订单详情[该接口会调用user-grpc/order-grpc/product-grpc接口，并且使用dtm事务以及绕过auth白名单]
+- 获取用户订单详情[该接口会调用user-grpc/order-grpc/product-grpc接口]
 
 ## `product` 产品服务
 
@@ -47,7 +47,7 @@
 
 ## `order` 服务
 
-- 添加订单功能 [增加了 DTM 事务支持。创建订单会使用 DTM 的 SAGA 事务扣除产品库存]
+- 添加订单功能 [增加了 `DTM` 事务支持。创建订单会使用 `DTM` 的 `SAGA` 事务扣除产品库存并且绕过 `auth` 白名单鉴权]
 - 获取订单详情功能
 
 ---
