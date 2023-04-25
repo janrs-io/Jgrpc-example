@@ -173,40 +173,40 @@ func (s *Server) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoReque
 	// 获取用户详情
 	userInfo, err := s.repo.UserInfo(ctx)
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[1]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[2]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	// 获取订单详情
 	orderInfo, err := s.repo.OrderInfo(md.ToOutgoing(ctx), request)
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[2]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[3]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	// 获取产品详情
 	productInfo, err := s.repo.ProductInfo(md.ToOutgoing(ctx), request)
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[3]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[4]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	anyUserData, err := anypb.New(userInfo)
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[4]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[5]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	anyOrderData, err := anypb.New(orderInfo)
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[5]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[6]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	anyProductData, err := anypb.New(productInfo)
 
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[6]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[7]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 	orderInfoResp.UserInfo = anyUserData
@@ -216,7 +216,7 @@ func (s *Server) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoReque
 	// 组合所有数据
 	allInfo, err := anypb.New(orderInfoResp)
 	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[7]："+err.Error())
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[8]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 	resp.ProtoAnyData = allInfo
