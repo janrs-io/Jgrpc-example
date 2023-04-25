@@ -3,6 +3,7 @@ package serverV1
 import (
 	"context"
 	"errors"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"gorm.io/gorm"
 
 	"github.com/go-kit/log"
@@ -158,6 +159,14 @@ func (s *Server) Info(ctx context.Context, _ *emptypb.Empty) (*userPBV1.Response
 // OrderInfo 获取订单详情
 func (s *Server) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoRequest) (*userPBV1.Response, error) {
 
+	accessToken, err := auth.AuthFromMD(ctx, "Bearer")
+	if err != nil {
+		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[1]："+err.Error())
+		return nil, errors.New("获取订单详情失败")
+	}
+	md := metadata.ExtractOutgoing(ctx)
+	md.Add("authorization", "Bearer "+accessToken)
+
 	orderInfoResp := &userPBV1.OrderInfoResponse{}
 	resp := &userPBV1.Response{}
 
@@ -169,14 +178,14 @@ func (s *Server) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoReque
 	}
 
 	// 获取订单详情
-	orderInfo, err := s.repo.OrderInfo(ctx, request)
+	orderInfo, err := s.repo.OrderInfo(md.ToOutgoing(ctx), request)
 	if err != nil {
 		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[2]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	// 获取产品详情
-	productInfo, err := s.repo.ProductInfo(ctx, request)
+	productInfo, err := s.repo.ProductInfo(md.ToOutgoing(ctx), request)
 	if err != nil {
 		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[3]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
