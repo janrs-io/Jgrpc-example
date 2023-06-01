@@ -6,6 +6,7 @@ metadata:
   namespace: rgrpc-dev
   labels:
     app: order
+    version: v1.0
 spec:
   replicas: 1
   selector:
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         app: order
+        version: v1.0
     spec:
       imagePullSecrets:
         - name: registry-secret

@@ -5,14 +5,14 @@ import (
 )
 
 // MigrateUserTable Migrate user table
-func MigrateUserTable(db *gorm.DB) {
+func MigrateUserTable(mysqlDB *gorm.DB) {
 
-	m := db.Migrator()
+	m := mysqlDB.Migrator()
 	if !m.HasTable(&User{}) {
 		if err := m.CreateTable(&User{}); err != nil {
 			panic("migrate Failed.[ERROR]=>create user table failed.")
 		}
-		db.Exec("ALTER TABLE `user` COMMENT 'user table'")
+		mysqlDB.Exec("ALTER TABLE `user` COMMENT 'user table'")
 	}
 
 }

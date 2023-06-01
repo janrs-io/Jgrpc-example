@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dtm
-  namespace: dtm-prod
+  namespace: dtm
   labels:
     app: dtm
 spec:

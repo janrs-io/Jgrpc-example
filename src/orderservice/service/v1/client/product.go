@@ -2,10 +2,10 @@ package clientV1
 
 import (
 	"context"
-	"time"
-
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"time"
 
 	"orderservice/config"
 	productPBV1 "productservice/genproto/go/v1"
@@ -21,8 +21,11 @@ func NewProductClient(conf *config.Config) (productPBV1.ProductServiceClient, er
 	defer cancel()
 
 	conn, err := grpc.DialContext(
-		ctx, serverAddress,
+		ctx,
+		serverAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
 	)
 
 	if err != nil {

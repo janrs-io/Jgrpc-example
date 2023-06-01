@@ -5,6 +5,6 @@ import (
 )
 
 // Migrate 迁移表格
-func Migrate(db *gorm.DB) {
-	MigrateUserTable(db) // Migrate user table
+func Migrate(mysqlDB *gorm.DB) {
+	MigrateUserTable(mysqlDB) // Migrate user table
 }

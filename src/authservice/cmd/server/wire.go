@@ -4,7 +4,6 @@
 package server
 
 import (
-	clientV1 "authservice/service/v1/client"
 	serverV1 "authservice/service/v1/server"
 	"github.com/google/wire"
 
@@ -14,16 +13,22 @@ import (
 func InitServer(cfg string) (*Server, error) {
 
 	wire.Build(
+		// 配置
+		config.NewConfig,
+
+		// 实例化 grpc 以及 http 服务
 		NewServer,
-		clientV1.NewAuthClient,
+
+		// 实例化服务
 		serverV1.NewServer,
 		serverV1.NewRepository,
-		config.NewConfig,
+
+		// 组件
 		NewRedis,
-		NewHttpServer,
 		NewGrpcServer,
 		NewRunGroup,
 		NewLogger,
+		NewTrace,
 	)
 
 	return &Server{}, nil

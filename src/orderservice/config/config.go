@@ -10,6 +10,7 @@ type Config struct {
 	Http     Http     `json:"http" yaml:"http"`
 	Database Database `json:"database" yaml:"database"`
 	Client   Client   `json:"client" yaml:"client"`
+	Trace    Trace    `json:"trace" yaml:"trace"`
 }
 
 // NewConfig Initial service's config

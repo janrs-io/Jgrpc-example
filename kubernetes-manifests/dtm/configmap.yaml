@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dtm-conf
-  namespace: dtm-prod
+  namespace: dtm
   labels:
     app: dtm
 data:
@@ -12,4 +12,4 @@ data:
       Host: 192.168.1.36  # 此处设置为集群外部的数据库 host，或者集群内部的数据库 svc-dns
       Port: 3306
       User: john
-      Password: 'password'
+      Password: '123456'

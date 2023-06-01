@@ -8,7 +8,6 @@ package server
 
 import (
 	"authservice/config"
-	"authservice/service/v1/client"
 	"authservice/service/v1/server"
 )
 
@@ -17,16 +16,15 @@ import (
 func InitServer(cfg string) (*Server, error) {
 	configConfig := config.NewConfig(cfg)
 	client := NewRedis(configConfig)
-	repository := serverV1.NewRepository(client, configConfig)
-	group := NewRunGroup()
-	logger := NewLogger()
-	server := NewHttpServer(configConfig)
-	authServiceClient, err := clientV1.NewAuthClient(configConfig)
+	tracerProvider, err := NewTrace(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	authServiceServer := serverV1.NewServer(repository, authServiceClient)
-	grpcServer := NewGrpcServer(logger, authServiceServer)
-	serverServer := NewServer(repository, configConfig, group, logger, server, grpcServer)
+	repository := serverV1.NewRepository(client, configConfig, tracerProvider)
+	group := NewRunGroup()
+	logger := NewLogger()
+	authorizationServer := serverV1.NewServer(configConfig, client, repository, logger)
+	server := NewGrpcServer(authorizationServer)
+	serverServer := NewServer(repository, configConfig, group, logger, server, tracerProvider)
 	return serverServer, nil
 }

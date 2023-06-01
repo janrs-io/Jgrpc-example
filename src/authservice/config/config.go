@@ -10,6 +10,7 @@ type Config struct {
 	Http      Http      `json:"http" yaml:"http"`
 	Redis     Redis     `json:"redis" yaml:"redis"`
 	WhiteList WhiteList `json:"whiteList" yaml:"whiteList"`
+	Trace     Trace     `json:"trace" yaml:"trace"`
 }
 
 // NewConfig Initial service's config

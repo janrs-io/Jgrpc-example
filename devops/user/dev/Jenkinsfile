@@ -15,7 +15,7 @@ pipeline{
     environment {
 
         // Harbor Mirror Center Address
-        REGISTRY_URL = "registry.your-domain.com:11223"
+        REGISTRY_URL = "registry.your-domain.com:1134"
 
         // Project Project Name
         PROJECT_NAME = "rgrpc-dev"
@@ -121,7 +121,7 @@ pipeline{
 
             when {
                 environment name: 'COMMIT_MESSAGE',
-                value: 'apply:service'
+                value: 'apply:svc'
             }
             steps{
 

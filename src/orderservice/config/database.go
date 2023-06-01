@@ -2,7 +2,11 @@ package config
 
 // Database Database config
 type Database struct {
-	Driver              string `json:"driver" yaml:"driver"`
+	Mysql Mysql `json:"mysql" yaml:"mysql"`
+}
+
+// Mysql Mysql config
+type Mysql struct {
 	Host                string `json:"host" yaml:"host"`
 	Port                int    `json:"port" yaml:"port"`
 	UserName            string `json:"username" yaml:"username"`

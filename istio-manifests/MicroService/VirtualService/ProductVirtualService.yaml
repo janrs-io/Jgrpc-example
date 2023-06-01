@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: product
+  namespace: rgrpc-dev
+spec:
+  gateways:
+    - rgrpc
+  hosts:
+    - dev.api.your-domain.com
+  http:
+    - match:
+        - uri:
+            prefix: /product
+      route:
+        - destination:
+            host: product
+            port:
+              number: 9001

@@ -3,8 +3,6 @@ package serverV1
 import (
 	"context"
 	"errors"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
-	"gorm.io/gorm"
 
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -13,8 +11,8 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"gorm.io/gorm"
 
-	authPBV1 "authservice/genproto/go/v1"
 	orderPBV1 "orderservice/genproto/go/v1"
 	productPBV1 "productservice/genproto/go/v1"
 	userPBV1 "userservice/genproto/go/v1"
@@ -24,7 +22,6 @@ import (
 type Server struct {
 	userPBV1.UnimplementedUserServiceServer
 	userClient    userPBV1.UserServiceClient
-	authClient    authPBV1.AuthServiceClient
 	orderClient   orderPBV1.OrderServiceClient
 	productClient productPBV1.ProductServiceClient
 	repo          *Repository
@@ -36,7 +33,6 @@ func NewServer(
 	repo *Repository,
 	logger log.Logger,
 	userClient userPBV1.UserServiceClient,
-	authClient authPBV1.AuthServiceClient,
 	orderClient orderPBV1.OrderServiceClient,
 	productClient productPBV1.ProductServiceClient,
 ) userPBV1.UserServiceServer {
@@ -44,7 +40,6 @@ func NewServer(
 		repo:          repo,
 		userClient:    userClient,
 		logger:        logger,
-		authClient:    authClient,
 		orderClient:   orderClient,
 		productClient: productClient,
 	}
@@ -53,14 +48,14 @@ func NewServer(
 // Register 用户注册
 func (s *Server) Register(ctx context.Context, req *userPBV1.RegisterRequest) (*userPBV1.Response, error) {
 
-	isExists, err := s.repo.IsUsernameExists(req.Username)
+	isExists, err := s.repo.IsUsernameExists(ctx, req.Username)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	if isExists {
 		return nil, status.Error(codes.FailedPrecondition, "用户名已存在")
 	}
-	_, err = s.repo.Register(req)
+	_, err = s.repo.Register(ctx, req)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -119,11 +114,7 @@ func (s *Server) Info(ctx context.Context, _ *emptypb.Empty) (*userPBV1.Response
 
 	resp := &userPBV1.Response{}
 	accessToken, err := auth.AuthFromMD(ctx, "Bearer")
-	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取用户信息失败，错误[1]："+err.Error())
-		return nil, status.Error(codes.FailedPrecondition, "获取获取信息失败")
-	}
-	info, err := s.repo.Info(accessToken)
+	info, err := s.repo.Info(ctx, accessToken)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, nil
@@ -159,14 +150,6 @@ func (s *Server) Info(ctx context.Context, _ *emptypb.Empty) (*userPBV1.Response
 // OrderInfo 获取订单详情
 func (s *Server) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoRequest) (*userPBV1.Response, error) {
 
-	accessToken, err := auth.AuthFromMD(ctx, "Bearer")
-	if err != nil {
-		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[1]："+err.Error())
-		return nil, errors.New("获取订单详情失败")
-	}
-	md := metadata.ExtractOutgoing(ctx)
-	md.Add("authorization", "Bearer "+accessToken)
-
 	orderInfoResp := &userPBV1.OrderInfoResponse{}
 	resp := &userPBV1.Response{}
 
@@ -178,14 +161,14 @@ func (s *Server) OrderInfo(ctx context.Context, request *userPBV1.OrderInfoReque
 	}
 
 	// 获取订单详情
-	orderInfo, err := s.repo.OrderInfo(md.ToOutgoing(ctx), request)
+	orderInfo, err := s.repo.OrderInfo(ctx, request)
 	if err != nil {
 		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[3]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")
 	}
 
 	// 获取产品详情
-	productInfo, err := s.repo.ProductInfo(md.ToOutgoing(ctx), request)
+	productInfo, err := s.repo.ProductInfo(ctx, request)
 	if err != nil {
 		_ = level.Error(s.logger).Log("msg", "获取订单详情失败，错误[4]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "获取订单详情失败")

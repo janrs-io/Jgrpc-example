@@ -3,32 +3,32 @@ package serverV1
 import (
 	"context"
 	"errors"
+
+	"github.com/redis/go-redis/v9"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"time"
 
 	"authservice/config"
-	"github.com/redis/go-redis/v9"
 )
 
 // Repository Repository
 type Repository struct {
 	redis *redis.Client
 	conf  *config.Config
+	trace *sdktrace.TracerProvider
 }
 
 // NewRepository New Repository
 func NewRepository(
 	redis *redis.Client,
 	conf *config.Config,
+	trace *sdktrace.TracerProvider,
 ) *Repository {
 	return &Repository{
 		redis: redis,
 		conf:  conf,
+		trace: trace,
 	}
-}
-
-// RegisterAuthentication 注册授权数据到 redis 缓存
-func (r *Repository) RegisterAuthentication(ctx context.Context, accessToken string, duration int64) (err error) {
-	return r.redis.Set(ctx, accessToken, "", time.Second*time.Duration(duration)).Err()
 }
 
 // GetAuthentication 获取授权数据
@@ -58,11 +58,6 @@ func (r *Repository) RefreshAccessTokenExpireTime(accessToken string, duration i
 	}
 	return nil
 
-}
-
-// DestroyAuthentication 销毁授权数据
-func (r *Repository) DestroyAuthentication(ctx context.Context, accessToken string) (err error) {
-	return r.redis.Del(ctx, accessToken).Err()
 }
 
 // IsWhiteListApi 判断请求的接口是否在接口白名单内

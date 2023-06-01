@@ -1,29 +1,26 @@
-# service
+# order service
 apiVersion: v1
 kind: Service
 metadata:
-  name: order-http
+  name: order
   namespace: rgrpc-dev
+  labels:
+    app: order
+    version: "1.0"
 spec:
   type: ClusterIP
   selector:
     app: order
   ports:
+    # http 服务
     - port: 9001
       protocol: TCP
+      name: http
+      appProtocol: http
       targetPort: 9001
----
-# service
-apiVersion: v1
-kind: Service
-metadata:
-  name: order-grpc
-  namespace: rgrpc-dev
-spec:
-  type: ClusterIP
-  selector:
-    app: order
-  ports:
+    # grpc 服务
     - port: 50051
       protocol: TCP
+      name: grpc
       targetPort: 50051
+      appProtocol: grpc

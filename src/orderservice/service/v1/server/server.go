@@ -5,7 +5,6 @@ import (
 	"errors"
 	"gorm.io/gorm"
 
-	authPBV1 "authservice/genproto/go/v1"
 	"github.com/dtm-labs/dtmgrpc"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
@@ -13,6 +12,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
+
 	"orderservice/config"
 	orderPBV1 "orderservice/genproto/go/v1"
 	productPBV1 "productservice/genproto/go/v1"
@@ -25,7 +25,6 @@ type Server struct {
 	conf          *config.Config
 	repo          *Repository
 	orderClient   orderPBV1.OrderServiceClient
-	authClient    authPBV1.AuthServiceClient
 	productClient productPBV1.ProductServiceClient
 }
 
@@ -35,7 +34,6 @@ func NewServer(
 	conf *config.Config,
 	repo *Repository,
 	orderClient orderPBV1.OrderServiceClient,
-	authClient authPBV1.AuthServiceClient,
 	productClient productPBV1.ProductServiceClient,
 ) orderPBV1.OrderServiceServer {
 	return &Server{
@@ -43,7 +41,6 @@ func NewServer(
 		logger:        logger,
 		conf:          conf,
 		orderClient:   orderClient,
-		authClient:    authClient,
 		productClient: productClient,
 	}
 }
@@ -51,7 +48,7 @@ func NewServer(
 // Create 添加订单
 func (s *Server) Create(ctx context.Context, request *orderPBV1.CreateRequest) (*orderPBV1.Response, error) {
 
-	err := s.repo.Create(request)
+	err := s.repo.Create(ctx, request)
 	if err != nil {
 		_ = level.Error(s.logger).Log("msg", "执行了创建订单失败")
 		return nil, status.Error(codes.Aborted, "创建订单失败，错误[1]："+err.Error())
@@ -79,14 +76,14 @@ func (s *Server) CreateSaga(ctx context.Context, request *orderPBV1.CreateReques
 	decreaseProductReq.Quantity = 1
 	decreaseProductReq.Id = request.ProductId
 
-	productDecreaseStock := "product-grpc.rgrpc-dev:50051/proto.product.v1.ProductService/DecreaseStock"
-	productDecreaseStockRevert := "product-grpc.rgrpc-dev:50051/proto.product.v1.ProductService/DecreaseStockRevert"
+	productDecreaseStock := "product.rgrpc-dev:50051/proto.product.v1.ProductService/DecreaseStock"
+	productDecreaseStockRevert := "product.rgrpc-dev:50051/proto.product.v1.ProductService/DecreaseStockRevert"
 
 	// 创建订单事务
 	orderNo := uuid.NewString()
 	request.OrderNo = orderNo
-	createOrder := "order-grpc.rgrpc-dev:50051/proto.order.v1.OrderService/Create"
-	createOrderRevert := "order-grpc.rgrpc-dev:50051/proto.order.v1.OrderService/CreateRevert"
+	createOrder := "order.rgrpc-dev:50051/proto.order.v1.OrderService/Create"
+	createOrderRevert := "order.rgrpc-dev:50051/proto.order.v1.OrderService/CreateRevert"
 
 	saga := dtmgrpc.NewSagaGrpc("dtm-svc.dtm-prod:36790", uuid.NewString())
 	saga.Add(createOrder, createOrderRevert, request)
@@ -105,7 +102,7 @@ func (s *Server) Detail(ctx context.Context, request *orderPBV1.DetailRequest) (
 
 	resp := &orderPBV1.Response{}
 
-	result, err := s.repo.Detail(request)
+	result, err := s.repo.Detail(ctx, request)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, nil

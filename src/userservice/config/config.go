@@ -11,6 +11,7 @@ type Config struct {
 	Database Database `json:"database" yaml:"database"`
 	Redis    Redis    `json:"redis" yaml:"redis"`
 	Client   Client   `json:"client" yaml:"client"`
+	Trace    Trace    `json:"trace" yaml:"trace"`
 }
 
 // NewConfig Initial service's config

@@ -1,6 +1,15 @@
 package server
 
 import (
+	"context"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.9.0"
+	"google.golang.org/grpc"
 	"os"
 	"strconv"
 
@@ -22,32 +31,20 @@ func NewRunGroup() *run.Group {
 	return &run.Group{}
 }
 
-// NewDB 实例化数据库组件
-func NewDB(conf *config.Config) *gorm.DB {
-
-	switch conf.Database.Driver {
-	case "mysql":
-		return newMysqlDB(conf)
-	default:
-		return newMysqlDB(conf)
-	}
-
-}
-
-// newMysqlDB 初始化 mysql 连接
-func newMysqlDB(conf *config.Config) *gorm.DB {
+// NewMysqlDB 初始化 mysql 连接
+func NewMysqlDB(conf *config.Config) *gorm.DB {
 
 	// Database configuration
 	dbConf := conf.Database
-	if dbConf.Database == "" {
+	if dbConf.Mysql.Database == "" {
 		panic("database config is empty.")
 	}
 
 	// Database connection dsn
-	dsn := dbConf.UserName + ":" +
-		dbConf.Password +
-		"@tcp(" + dbConf.Host + ":" + strconv.Itoa(dbConf.Port) + ")/" + dbConf.Database +
-		"?charset=" + dbConf.Charset + "&parseTime=True&loc=Local"
+	dsn := dbConf.Mysql.UserName + ":" +
+		dbConf.Mysql.Password +
+		"@tcp(" + dbConf.Mysql.Host + ":" + strconv.Itoa(dbConf.Mysql.Port) + ")/" + dbConf.Mysql.Database +
+		"?charset=" + dbConf.Mysql.Charset + "&parseTime=True&loc=Local"
 
 	// Set Config
 	mysqlConfig := mysql.Config{
@@ -75,9 +72,51 @@ func newMysqlDB(conf *config.Config) *gorm.DB {
 	}
 
 	sqlDB, _ := conn.DB()
-	sqlDB.SetMaxIdleConns(dbConf.MaxIdleCons)
-	sqlDB.SetMaxOpenConns(dbConf.MaxOpenCons)
+	sqlDB.SetMaxIdleConns(dbConf.Mysql.MaxIdleCons)
+	sqlDB.SetMaxOpenConns(dbConf.Mysql.MaxOpenCons)
 
 	return conn
+
+}
+
+// NewTrace 实例化 Trace
+func NewTrace(conf *config.Config) (*sdktrace.TracerProvider, error) {
+
+	ctx := context.Background()
+	traceClient := otlptracegrpc.NewClient(
+		otlptracegrpc.WithInsecure(),
+		otlptracegrpc.WithEndpoint(conf.Trace.EndPoint),
+		otlptracegrpc.WithDialOption(grpc.WithBlock()),
+	)
+	traceExp, err := otlptrace.New(ctx, traceClient)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := resource.New(ctx,
+		resource.WithFromEnv(),
+		resource.WithProcess(),
+		resource.WithTelemetrySDK(),
+		resource.WithHost(),
+		resource.WithAttributes(semconv.ServiceNameKey.String(conf.Trace.ServiceName)))
+	if err != nil {
+		return nil, err
+	}
+
+	bsp := sdktrace.NewBatchSpanProcessor(traceExp)
+
+	tracerProvider := sdktrace.NewTracerProvider(
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithResource(res),
+		sdktrace.WithSpanProcessor(bsp),
+	)
+
+	otel.SetTextMapPropagator(
+		propagation.NewCompositeTextMapPropagator(propagation.TraceContext{},
+			propagation.Baggage{}),
+	)
+	otel.SetTracerProvider(tracerProvider)
+
+	return tracerProvider, nil
 
 }

@@ -1,31 +1,26 @@
-# http service
-
+# user service
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-http
+  name: user
   namespace: rgrpc-dev
+  labels:
+    app: user
+    version: "1.0"
 spec:
   type: ClusterIP
   selector:
     app: user
   ports:
+    # http 服务
     - port: 9001
       protocol: TCP
+      name: http
       targetPort: 9001
----
-# grpc service
-apiVersion: v1
-kind: Service
-metadata:
-  name: user-grpc
-  namespace: rgrpc-dev
-spec:
-  type: ClusterIP
-  selector:
-    app: user
-  ports:
+      appProtocol: http
+    # grpc 服务
     - port: 50051
       protocol: TCP
+      name: grpc
       targetPort: 50051
-
+      appProtocol: grpc

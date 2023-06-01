@@ -1,0 +1,17 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger
+  namespace: jaeger
+spec:
+  strategy: production
+  storage:
+    type: elasticsearch
+    options:
+      es:
+        server-urls: http://elasticsearch.com:9200
+        username: elastic
+        password: y89usB0bMUQb5r7Cbidt
+        index-prefix: jaeger_
+        version: 7
+        create-index-templates: false

@@ -11,25 +11,25 @@ http:
   name: "auth-http"
 # database config
 database:
-  driver: mysql # Database Drivers
-  host: 192.168.1.36 # Host
-  port: 3306 # Port
-  username: john # Username
-  password: password # Password
-  database: rgrpc-user # Database
-  charset: utf8mb4 # Charset
-  maxIdleCons: 10 # Maximum number of connections in the idle connection pool
-  maxOpenCons: 100 # Maximum number of open database connections
-  logMode: info # Log level
-  enableFileLogWriter: true # Whether to enable log files
-  logFilename: sql.log # Log file name
+  mysql:
+    host: 192.168.1.36 # Host
+    port: 3306 # Port
+    username: john # Username
+    password: 123456 # Password
+    database: rgrpc-user # Database
+    charset: utf8mb4 # Charset
+    maxIdleCons: 10 # Maximum number of connections in the idle connection pool
+    maxOpenCons: 100 # Maximum number of open database connections
+    logMode: info # Log level
+    enableFileLogWriter: true # Whether to enable log files
+    logFilename: sql.log # Log file name
 
 # redis config
 redis:
   host: 192.168.1.36
   port: ":6379"
   username: "default"
-  password: "password"
+  password: "123456"
   database: 0
   dial_timeout: 10s
   read_timeout: 10s
@@ -46,7 +46,13 @@ logger:
 # whiteList 权限白名单
 whiteList:
   api:
-    - "/proto.v1.UserService/Login"
-    - "/proto.v1.UserService/Register"
+    # user 用户服务接口白名单
+    - "/user.v1.login"
+    - "/user.v1.register"
   permission:
     - ""
+
+# otel trace 链路追踪配置
+trace:
+  serviceName: "auth-service"
+  endPoint: "otel-collector.otel:4317"

@@ -2,6 +2,7 @@ package clientV1
 
 import (
 	"context"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"time"
 
 	"google.golang.org/grpc"
@@ -21,6 +22,8 @@ func NewUserClient(conf *config.Config) (userPBV1.UserServiceClient, error) {
 	conn, err := grpc.DialContext(
 		ctx, serverAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
 	)
 
 	if err != nil {

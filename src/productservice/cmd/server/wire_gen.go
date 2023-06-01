@@ -7,8 +7,8 @@
 package server
 
 import (
+	"github.com/janrs-io/Jgrpc-otel-span"
 	"productservice/config"
-	"productservice/service/v1/client"
 	"productservice/service/v1/server"
 )
 
@@ -19,14 +19,15 @@ func InitServer(cfg string) (*Server, error) {
 	group := NewRunGroup()
 	logger := NewLogger()
 	server := NewHttpServer(configConfig)
-	db := NewDB(configConfig)
-	repository := serverV1.NewRepository(db)
-	authServiceClient, err := clientV1.NewAuthClient(configConfig)
+	db := NewMysqlDB(configConfig)
+	tracerProvider, err := NewTrace(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	productServiceServer := serverV1.NewServer(logger, repository, authServiceClient)
-	grpcServer := NewGrpcServer(logger, productServiceServer)
-	serverServer := NewServer(configConfig, group, logger, server, grpcServer, db, repository)
+	otelSpan := Jgrpc_otelspan.New(tracerProvider)
+	repository := serverV1.NewRepository(db, configConfig, otelSpan)
+	productServiceServer := serverV1.NewServer(logger, repository)
+	grpcServer := NewGrpcServer(productServiceServer)
+	serverServer := NewServer(configConfig, group, logger, server, grpcServer, db, repository, tracerProvider)
 	return serverServer, nil
 }

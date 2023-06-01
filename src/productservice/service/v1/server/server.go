@@ -11,35 +11,31 @@ import (
 	"google.golang.org/protobuf/types/known/anypb"
 	"gorm.io/gorm"
 
-	authPBV1 "authservice/genproto/go/v1"
 	productPBV1 "productservice/genproto/go/v1"
 )
 
 // Server Server struct
 type Server struct {
 	productPBV1.UnimplementedProductServiceServer
-	logger     log.Logger
-	repo       *Repository
-	authClient authPBV1.AuthServiceClient
+	logger log.Logger
+	repo   *Repository
 }
 
 // NewServer New service grpc server
 func NewServer(
 	logger log.Logger,
 	repo *Repository,
-	authClient authPBV1.AuthServiceClient,
 ) productPBV1.ProductServiceServer {
 	return &Server{
-		repo:       repo,
-		logger:     logger,
-		authClient: authClient,
+		repo:   repo,
+		logger: logger,
 	}
 }
 
 // Create 添加产品
 func (s *Server) Create(ctx context.Context, request *productPBV1.CreateRequest) (*productPBV1.Response, error) {
 
-	if _, err := s.repo.Create(request); err != nil {
+	if _, err := s.repo.Create(ctx, request); err != nil {
 		_ = level.Info(s.logger).Log("msg", "添加产品失败，错误[1]："+err.Error())
 		return nil, status.Error(codes.Aborted, "添加产品失败")
 	}
@@ -50,7 +46,7 @@ func (s *Server) Create(ctx context.Context, request *productPBV1.CreateRequest)
 // Delete 删除产品
 func (s *Server) Delete(ctx context.Context, request *productPBV1.DeleteRequest) (*productPBV1.Response, error) {
 
-	if err := s.repo.Delete(request); err != nil {
+	if err := s.repo.Delete(ctx, request); err != nil {
 		_ = level.Error(s.logger).Log("msg", "删除产品失败，错误[1]："+err.Error())
 		return nil, status.Error(codes.Aborted, "删除失败")
 	}
@@ -62,7 +58,7 @@ func (s *Server) Delete(ctx context.Context, request *productPBV1.DeleteRequest)
 func (s *Server) Detail(ctx context.Context, request *productPBV1.DetailRequest) (*productPBV1.Response, error) {
 
 	resp := &productPBV1.Response{}
-	detail, err := s.repo.Detail(request)
+	detail, err := s.repo.Detail(ctx, request)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			resp.Msg = "数据不存在"
@@ -98,7 +94,7 @@ func (s *Server) Detail(ctx context.Context, request *productPBV1.DetailRequest)
 func (s *Server) List(ctx context.Context, request *productPBV1.ListRequest) (*productPBV1.Response, error) {
 
 	resp := &productPBV1.Response{}
-	list, count, err := s.repo.List(request)
+	list, count, err := s.repo.List(ctx, request)
 	if err != nil {
 		_ = level.Error(s.logger).Log("msg", "获取列表数据失败，错误[1]："+err.Error())
 		return resp, status.Error(codes.FailedPrecondition, "获取列表失败")
@@ -133,7 +129,7 @@ func (s *Server) List(ctx context.Context, request *productPBV1.ListRequest) (*p
 // Update 更新产品详情
 func (s *Server) Update(ctx context.Context, request *productPBV1.UpdateRequest) (*productPBV1.Response, error) {
 
-	if err := s.repo.Update(request); err != nil {
+	if err := s.repo.Update(ctx, request); err != nil {
 		_ = level.Error(s.logger).Log("msg", "更新产品失败，错误[1]："+err.Error())
 		return nil, status.Error(codes.FailedPrecondition, "更新产品失败")
 	}
@@ -145,7 +141,7 @@ func (s *Server) Update(ctx context.Context, request *productPBV1.UpdateRequest)
 // 这个接口用于执行 saga 事务成功的时候调用
 func (s *Server) DecreaseStock(ctx context.Context, request *productPBV1.DecreaseStockRequest) (*productPBV1.Response, error) {
 
-	if err := s.repo.DecreaseStock(request.Id, request.Quantity); err != nil {
+	if err := s.repo.DecreaseStock(ctx, request.Id, request.Quantity); err != nil {
 		_ = level.Error(s.logger).Log("msg", "减少库存失败，错误[1]："+err.Error())
 		return nil, status.Error(codes.Aborted, "减少库存失败，错误[1]："+err.Error())
 	}
@@ -157,7 +153,7 @@ func (s *Server) DecreaseStock(ctx context.Context, request *productPBV1.Decreas
 // 这个接口用于执行 saga 事务失败的时候调用
 func (s *Server) DecreaseStockRevert(ctx context.Context, request *productPBV1.DecreaseStockRequest) (*productPBV1.Response, error) {
 
-	if err := s.repo.IncreaseStock(request.Id, request.Quantity); err != nil {
+	if err := s.repo.IncreaseStock(ctx, request.Id, request.Quantity); err != nil {
 		_ = level.Error(s.logger).Log("msg", "回滚库存失败，错误[1]："+err.Error())
 		return nil, status.Error(codes.Aborted, "回滚库存失败，错误[1]："+err.Error())
 	}

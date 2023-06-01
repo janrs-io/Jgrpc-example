@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-
 	"userservice/cmd/server"
 )
 

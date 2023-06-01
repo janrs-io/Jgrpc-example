@@ -1,66 +1,143 @@
 package serverV1
 
 import (
-	"context"
+	"encoding/json"
+	authv3 "github.com/envoyproxy/go-control-plane/envoy/service/auth/v3"
+	typev3 "github.com/envoyproxy/go-control-plane/envoy/type/v3"
+	"github.com/go-kit/log"
+	"github.com/go-kit/log/level"
+	"github.com/redis/go-redis/v9"
+	"google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
-	authPBV1 "authservice/genproto/go/v1"
+	"authservice/config"
+	"golang.org/x/net/context"
 )
 
-// Server Server struct
 type Server struct {
-	authPBV1.UnimplementedAuthServiceServer
-	repo       *Repository
-	authClient authPBV1.AuthServiceClient
+	authv3.UnimplementedAuthorizationServer
+	conf   *config.Config
+	redis  *redis.Client
+	repo   *Repository
+	logger log.Logger
 }
 
-// NewServer New Server
-func NewServer(repo *Repository, authClient authPBV1.AuthServiceClient) authPBV1.AuthServiceServer {
+func NewServer(
+	conf *config.Config,
+	redis *redis.Client,
+	repo *Repository,
+	logger log.Logger,
+) authv3.AuthorizationServer {
 	return &Server{
-		repo:       repo,
-		authClient: authClient,
+		conf:   conf,
+		redis:  redis,
+		repo:   repo,
+		logger: logger,
 	}
 }
 
-// RegisterAuth 用户登录后注册新的授权
-func (s *Server) RegisterAuth(ctx context.Context, req *authPBV1.RegisterAuthRequest) (*authPBV1.Response, error) {
+var (
+	UnauthorizedMsg = "没有权限"
+	ForbiddenMsg    = "没有权限"
+)
 
-	err := s.repo.RegisterAuthentication(ctx, req.AccessToken, req.Duration)
-	if err != nil {
-		return nil, status.Error(codes.FailedPrecondition, "注册授权失败，错误："+err.Error())
-	}
-	return &authPBV1.Response{}, nil
-
+// Response 返回 HTTP Body 数据
+type Response struct {
+	Code int64    `json:"code"`
+	Msg  string   `json:"msg"`
+	Data struct{} `json:"data"`
 }
 
-// GetAuth 获取授权
-func (s *Server) GetAuth(ctx context.Context, req *authPBV1.GetAuthRequest) (*authPBV1.Response, error) {
-
-	err := s.repo.GetAuthentication(ctx, req.AccessToken, req.Duration)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "获取授权失败，错误："+err.Error())
+// Check istio-grpc 外部鉴权方法
+func (s *Server) Check(ctx context.Context, req *authv3.CheckRequest) (*authv3.CheckResponse, error) {
+	attrs := req.GetAttributes()
+	httpHeaders := attrs.GetRequest().GetHttp().GetHeaders()
+	// 获取请求路径
+	path, exists := httpHeaders[":path"]
+	if !exists {
+		_ = level.Info(s.logger).Log("msg", "获取不到 :path 字段")
+		return s.Unauthorized(), nil
 	}
-	return &authPBV1.Response{}, nil
+	// 判断是否是白名单
+	if s.repo.IsWhiteListApi(path) {
+		return s.Allow(), nil
+	}
+	// 获取头部 token
+	token, exists := httpHeaders["authorization"]
+	duration := 7 * 24 * 60 * 60
+	if !exists {
+		_ = level.Info(s.logger).Log("msg", "未传递头部 authorization 字段")
+		return s.Unauthorized(), nil
+	}
+	// 去除头部 "Bearer "字符串
+	if len(token) <= 7 {
+		_ = level.Info(s.logger).Log("msg", "authorization 数据格式错误。没有设置 Bearer 前缀")
+		return s.Unauthorized(), nil
+	}
+	// 截取后面的 token 字符串
+	token = token[7:]
 
+	// 验证 token
+	if err := s.repo.GetAuthentication(ctx, token, int64(duration)); err != nil {
+		_ = level.Info(s.logger).Log("msg", "access token 不存在")
+		return s.Unauthorized(), nil
+	}
+	return s.Allow(), nil
 }
 
-// DestroyAuth 销毁授权数据
-func (s *Server) DestroyAuth(ctx context.Context, req *authPBV1.DestroyAuthRequest) (*authPBV1.Response, error) {
-
-	if err := s.repo.DestroyAuthentication(ctx, req.AccessToken); err != nil {
-		return nil, status.Error(codes.FailedPrecondition, "销毁授权失败。错误："+err.Error())
+// Allow 通过鉴权。返回 200
+func (s *Server) Allow() *authv3.CheckResponse {
+	return &authv3.CheckResponse{
+		Status: &status.Status{Code: int32(codes.OK)},
+		HttpResponse: &authv3.CheckResponse_OkResponse{
+			OkResponse: &authv3.OkHttpResponse{},
+		},
 	}
-	return &authPBV1.Response{}, nil
-
 }
 
-// IsApiWhiteList 查询请求的接口地址是否是在白名单内
-func (s *Server) IsApiWhiteList(_ context.Context, req *authPBV1.IsApiWhiteListRequest) (*authPBV1.Response, error) {
-
-	if s.repo.IsWhiteListApi(req.FullMethodName) {
-		return &authPBV1.Response{}, nil
+// Unauthorized Unauthorized 未授权 401
+func (s *Server) Unauthorized() *authv3.CheckResponse {
+	resp := &Response{
+		Code: int64(typev3.StatusCode_Unauthorized),
+		Msg:  UnauthorizedMsg,
+		Data: struct{}{},
 	}
-	return nil, status.Error(codes.FailedPrecondition, "非白名单接口")
+	respJson, err := json.Marshal(resp)
+	httpBody := ""
+	if err == nil {
+		httpBody = string(respJson)
+	}
+	return &authv3.CheckResponse{
+		Status: &status.Status{Code: int32(codes.Unauthenticated)},
+		HttpResponse: &authv3.CheckResponse_DeniedResponse{
+			DeniedResponse: &authv3.DeniedHttpResponse{
+				Status: &typev3.HttpStatus{Code: typev3.StatusCode_Unauthorized},
+				Body:   httpBody,
+			},
+		},
+	}
+}
 
+// Forbidden Forbidden 没有权限 403
+func (s *Server) Forbidden() *authv3.CheckResponse {
+	resp := &Response{
+		Code: int64(typev3.StatusCode_Forbidden),
+		Msg:  ForbiddenMsg,
+		Data: struct{}{},
+	}
+	respJson, err := json.Marshal(resp)
+	httpBody := ""
+	if err == nil {
+		httpBody = string(respJson)
+	}
+
+	return &authv3.CheckResponse{
+		Status: &status.Status{Code: int32(codes.PermissionDenied)},
+		HttpResponse: &authv3.CheckResponse_DeniedResponse{
+			DeniedResponse: &authv3.DeniedHttpResponse{
+				Status: &typev3.HttpStatus{Code: typev3.StatusCode_Forbidden},
+				Body:   httpBody,
+			},
+		},
+	}
 }
